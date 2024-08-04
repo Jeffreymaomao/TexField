@@ -1,0 +1,152 @@
+* {
+    box-sizing: border-box;
+    position: relative;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    overflow: hidden;
+}
+
+/* --- */
+.freemath-container {
+    cursor: grab;
+}
+
+.freemath-container.dragging {
+    cursor: grabbing;
+}
+
+.freemath-canvas {
+}
+
+.freemath-path-container {
+}
+
+.freemath-note-container {
+}
+
+.note {
+    position: absolute;
+    display: block;
+    white-space: nowrap;
+    margin: 0;
+    padding: 8px;
+    border: 1px solid #888;
+    background-color: white;
+    border-radius: 6px;
+    cursor: move;
+    transform: translate(-50%, -50%);
+}
+
+.freemath-container.drawingPath .note:after {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+/*    background-color: rgba(250, 250, 250, 0.6);*/
+}
+
+.note.focus {
+    box-shadow: 0 0 6px #fdfa72, 0 0 6px #fdfa72;
+}
+
+/* --- */
+
+@keyframes path-blink {
+    0% {
+        stroke-width: 4px;
+    }
+    50% {
+        stroke-width: 2px;
+    }
+    100% {
+        stroke-width: 4px;
+    }
+}
+
+.path {
+    stroke: #ccc;
+    stroke-width: 2;
+    cursor: pointer;
+}
+
+.path.focus {
+    stroke: #e3e166;
+    stroke-width: 4px;
+}
+
+/* --- dark mode --- */
+
+.freemath-container.dark.drawingPath .note:after {
+/*    background-color: rgba(100, 100, 100, 0.6);*/
+}
+
+.freemath-container.dark .note,
+.freemath-container.dark .mathnote-text-textarea{
+    background-color: #222;
+    color: #eee;
+}
+
+.freemath-container.dark .mq-latex-command-input {
+    border-color: #eee;
+}
+
+.freemath-container.dark .mq-cursor {
+    border-color: #eee;
+}
+
+.freemath-container.dark .mq-denominator.mq-empty,
+.freemath-container.dark .mq-numerator.mq-empty,
+.freemath-container.dark .mq-from .mq-empty,
+.freemath-container.dark .mq-to .mq-empty {
+    background-color: #555;
+}
+
+.freemath-container.dark .mq-editable-field.mq-focused,
+.freemath-container.dark .mq-math-mode .mq-editable-field.mq-focused {
+    -webkit-box-shadow: #0278c7 0 0 1px 1px, inset #002b57 0 0 1px 0;
+    -moz-box-shadow: #0278c7 0 0 1px 1px, inset #002b57 0 0 1px 0;
+    box-shadow: #0278c7 0 0 1px 1px, inset #002b57 0 0 1px 0;
+    border-color: #0063bd;
+    border-radius: 1px;
+}
+
+.freemath-container.dark .note.focus {
+    box-shadow: 0 0 6px #e3e166, 0 0 6px #e3e166;
+}
+
+
+.freemath-container.dark .path {
+    stroke: #999;
+}
+
+
+.freemath-container.dark .mq-math-mode .mq-selection,
+.freemath-container.dark .mq-editable-field .mq-selection,
+.freemath-container.dark .mq-math-mode .mq-selection .mq-non-leaf,
+.freemath-container.dark .mq-editable-field .mq-selection .mq-non-leaf,
+.freemath-container.dark .mq-math-mode .mq-selection .mq-scaled,
+.freemath-container.dark .mq-editable-field .mq-selection .mq-scaled {
+    background: #6190c9 !important;
+    color: white;
+}
+
+
+/* --- */
+
+@media print {
+    * {
+        -webkit-print-color-adjust: exact ;
+        color-adjust: exact ;
+    }
+}
+
+
+
+
+
+
+
