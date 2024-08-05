@@ -19,14 +19,14 @@ module.exports = {
                 use: ['style-loader', 'css-loader'],
             },
             {
-                test: /\.(svg|otf|eot|ttf|woff|woff2)$/i,
+                test: /\.(otf|eot|ttf|woff|woff2)$/i,
                 type: 'asset/resource',
                 generator: {
                     filename: 'font/[name][ext][query]'
                 }
             },
             {
-                test: /\.(png|jpe?g|gif)$/i,
+                test: /\.(png|jpe?g|gif|svg)$/i,
                 type: 'asset/resource',
                 generator: {
                     filename: 'img/[name][ext][query]'
