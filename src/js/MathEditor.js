@@ -106,30 +106,17 @@ class MathEditor {
         }
         // ------
 
-        // variables use to check is (block/textarea) is focus or not
-        // let mathBlockFocus = false;
-
         // math block events
         mathBlock.addEventListener('focus',function(e) {
-            // mathBlockFocus = true;
             mathBlock.classList.add('focus');
             mathRenderLatexArea.classList.remove('isEmpty');
             this.focusId = blockId;
-
-            mathTextArea.focus();
-
+            mathTextArea.focus(); // (remark-1) After block focus, focus move to textarea
             checkIsEmpty();
         }.bind(this), false);
 
         mathBlock.addEventListener('blur',function(e) {
-            // mathBlockFocus = false;
             mathBlock.classList.remove('focus');
-
-            // using a setTimeout function to wait (if) textarea focus
-            setTimeout(()=>{
-                if(document.activeElement===mathTextArea) return;
-                mathBlock.classList.remove('editing');
-            },0);
         }.bind(this), false);
 
         mathBlock.addEventListener('keydown', function(e) {
@@ -151,16 +138,14 @@ class MathEditor {
         mathTextArea.addEventListener('focus', function(e) {
             mathBlock.classList.add('focus');
         }.bind(this), false);
-        
+
         mathTextArea.addEventListener('blur', function(e) {
             mathBlock.classList.remove('focus');
 
-            // using a setTimeout function to wait (if) block focus
+            // using a setTimeout function to wait (if) textarea focus
             setTimeout(()=>{
-                if(document.activeElement===mathBlock){
-                    console.log(document.activeElement===mathBlock);
-                    return;
-                }
+                // !!! since after click block, textarea focus (at remark-1)
+                if(document.activeElement===mathTextArea) return;
                 mathBlock.classList.remove('editing');
             },0);
         }.bind(this), false);
