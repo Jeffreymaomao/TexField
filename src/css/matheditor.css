@@ -12,6 +12,15 @@
  * mathnote one block (math mode) *
  **********************************/
 
+.mathnote-latex {
+    --padding-width: 12px;
+    --background-color: rgb(245,245,245);
+    --border-color: rgb(100,100,100);
+    --error-text-color: rgb(200,30,30);
+    --error-border-color: rgb(200,30,30);
+    --dark-error-color: rgb(200,100,100);
+}
+
 /** ---
  * LaTeX is not editing (default)
  ** --- */
@@ -60,6 +69,8 @@
     padding: 15px 15px;
     cursor: text;
     transition: height, transform 0.05s ease-out;
+    cursor: pointer;
+    user-select: none;
 }
 
 .mathnote-block .mathnote-latex::after {
@@ -68,11 +79,13 @@
 }
 
 .mathnote-block .mathnote-latex.error{
-    color: var(--border-color-error);
+    max-width: 100%;
+    white-space: wrap;
+    color: var(--error-text-color);
 }
 
 .mathnote-block .mathnote-latex.isEmpty::before {
-    content: 'The LaTeX is empty...';
+    content: 'Empty LaTeX';
     font: 14px 'Menlo', monospace;
     color: #bbb;
 }
@@ -80,13 +93,6 @@
 /** ---
  * LaTeX is editing
  ** --- */
-
-.mathnote-latex {
-    --padding-width: 12px;
-    --background-color: rgb(240,240,240);
-    --border-color: rgb(100,100,100);
-    --border-color-error: rgb(200,30,30);
-}
 
  /* When the LaTeX is editing => show textarea & LaTeX block */
 
@@ -105,7 +111,6 @@
     min-width: 45px;
     background-color: var(--background-color);
     border: 1px solid var(--border-color);
-    cursor: text;
 }
 
 .mathnote-block.editing .mathnote-latex::after {
@@ -123,15 +128,16 @@
     cursor: text;
 }
 
+
 .mathnote-block.editing .mathnote-latex.error {
-    border-color: var(--border-color-error);
-    color: var(--border-color-error);
+    border-color: var(--error-border-color);
+    color: var(--error-border-color);
 }
 
 .mathnote-block.editing .mathnote-latex.error::after {
     background-color: var(--background-color);
-    border-bottom: 1px solid var(--border-color-error);
-    border-right: 1px solid var(--border-color-error);
+    border-bottom: 1px solid var(--error-border-color);
+    border-right: 1px solid var(--error-border-color);
 }
 
 /* show label */
@@ -146,9 +152,42 @@
     top: 50%;
     transform: translate(0, -50%);
     text-align: middle;
+    cursor: pointer;
+    user-select: none;
 }
 
 /* ---------------- */
+
+body.dark .mathnote-text-textarea,
+body.dark .mathnote-math-textarea {
+    background-color: #222;
+    color: #eee;
+}
+
+body.dark .mathnote-block .mathnote-latex.error{
+    color: rgb(230, 100, 100);
+}
+
+body.dark .mathnote-block.editing .mathnote-latex,
+body.dark .mathnote-block.editing .mathnote-latex::after {
+    border-color: rgba(30, 150, 150);
+    background-color: rgb(38, 59, 74);
+    color: rgb(200, 250, 250);
+}
+
+body.dark .mathnote-block.editing .mathnote-latex,
+body.dark .mathnote-block.editing .mathnote-latex::after {
+    border-color: rgba(150, 150, 150);
+    background-color: rgb(50,50,50);
+    color: rgb(250, 250, 250);
+}
+
+body.dark .mathnote-block.editing .mathnote-latex.error,
+body.dark .mathnote-block.editing .mathnote-latex.error::after {
+    border-color: rgb(200, 30, 30);
+    background-color: rgb(74, 54, 53);
+    color: rgb(230, 201, 197);
+}
 
 /*.mathnote-block.textmode textarea.mathnote-text-textarea {
     width: 100%;
@@ -162,10 +201,6 @@
     white-space: nowrap;
 }
 
-.mathnote-block.textmode .mathnote-text-textarea:focus{
-    outline: none;
-}
-
 .mathnote-block.focus {
     box-shadow: none;
     border-style: solid;
@@ -175,18 +210,4 @@
 
     box-shadow: 0 0 2px #6a93d2,
                 0 0 2px #6a93d2;
-}
-
-.mathnote-block.focus {
-    box-shadow: 0 0 2px #d26a93,
-                0 0 2px #d26a93;
-    border-color: #d26a93;
-}
-
-.mathnote-block {
-    padding: 0px;
-}
-
-.mathnote-block.textmode textarea.mathnote-text-textarea {
-    padding: 14px 15px;
 }*/

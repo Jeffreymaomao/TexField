@@ -19,16 +19,7 @@ class MathEditor {
         this.isComposing = false;
         this.katex = window.katex;
         if(!this.katex) throw Error("KaTeX not defined!!!");
-
-        if(!window.MathEditors){
-            window.MathEditors = [];
-        } else{
-            window.MathEditors.forEach(matheditor=>{
-                Object.values(matheditor.mathfields).forEach((mathfield)=>{
-                    mathfield.blur();
-                });
-            });
-        }
+        if(!window.MathEditors) window.MathEditors = [];
         window.MathEditors.push(this);
         window.needFocusUpDown = false;
         this.initializeDom();
@@ -66,7 +57,6 @@ class MathEditor {
             this.dom.container.insertBefore(block, this.dom.blocks[this.focusId].nextSibling); // focus block next is not empty
         }
         this.orderLabelNum();
-        this.states[id] = state;
         return true;
     }
 
@@ -104,6 +94,12 @@ class MathEditor {
                 mathRenderLatexArea.classList.remove('isEmpty');
             }
         }
+
+        const label = this.createLabelDom(blockId);
+        mathBlock.appendChild(label);
+
+        this.orderLabelNum();
+
         // ------
 
         // math block events
@@ -111,7 +107,10 @@ class MathEditor {
             mathBlock.classList.add('focus');
             mathRenderLatexArea.classList.remove('isEmpty');
             this.focusId = blockId;
-            mathTextArea.focus(); // (remark-1) After block focus, focus move to textarea
+
+            // (remark-1) If editing => After block focus, focus move to textarea
+            if(mathBlock.classList.contains('editing')) mathTextArea.focus();
+
             checkIsEmpty();
         }.bind(this), false);
 
@@ -141,7 +140,6 @@ class MathEditor {
 
         mathTextArea.addEventListener('blur', function(e) {
             mathBlock.classList.remove('focus');
-
             // using a setTimeout function to wait (if) textarea focus
             setTimeout(()=>{
                 // !!! since after click block, textarea focus (at remark-1)
@@ -150,15 +148,16 @@ class MathEditor {
             },0);
         }.bind(this), false);
         // ------
-        this.dom.blocks[blockId] = mathBlock;
+
         setTimeout(()=>{
             this.adjustTextAreaSize(mathTextArea);
             this.renderLaTex(mathTextArea, mathRenderLatexArea);
             mathBlock.focus();
             this.focusId = blockId;
         },0);
-        const label = this.createLabelDom(blockId);
-        mathBlock.appendChild(label);
+
+        this.dom.blocks[blockId] = mathBlock;
+        this.states[blockId] = state;
         return mathBlock;
     }
 
@@ -210,14 +209,65 @@ class MathEditor {
                 // when it is not editing
                 mathBlock.focus(); // focus move to block
             }
-        } else if (e.key==='Enter') {
-            if(document.activeElement===mathTextArea) return;
+        } else if(document.activeElement===mathTextArea){
+            return; // following is some action, so editing (textarea focus) => return;
+        } else if (e.key==='ArrowUp' || e.key==='ArrowDown') {
+            this.moveFocusUpDown(e, mathBlock);
+        } else if ((e.ctrlKey || e.metaKey) && e.key==='Enter') {
             this.createEquationDom();
-        }  else if(e.key==='ArrowUp' || e.key==='ArrowDown') {
-            console.log(e.key);
-        } else if ((e.ctrlKey || e.metaKey)  && e.key==='Backspace' && !e.shiftKey && !e.altKey){
-        } else if((e.ctrlKey || e.metaKey) && e.key==='"' && !e.shiftKey && !e.altKey){
+        } else if ((e.ctrlKey || e.metaKey) && e.key==='Backspace' && !e.shiftKey && !e.altKey){
+            this.deleteFocus();
+        } else if ((e.ctrlKey || e.metaKey) && e.key==='"' && !e.shiftKey && !e.altKey){
         }
+    }
+
+    //////////////////////////////////////////////////////
+
+    createLabelDom(id){
+        const labelId = `${id}-label-num`;
+
+        const label = createAndAppendElement(null, 'div', {
+            class: 'mathnote-label katex'
+        });
+
+        const mathDom = createAndAppendElement(label, 'math');
+        mathDom.setAttribute('xmlns','http://www.w3.org/1998/Math/MathML')
+        mathDom.setAttribute('display','block');
+
+        const semantics = createAndAppendElement(mathDom, 'semantics', {
+        });
+
+        const labelLeaf = createAndAppendElement(semantics, 'mrow',{
+            class: '',
+        });
+
+        const labelLeftBrace = createAndAppendElement(labelLeaf, 'mo',{
+            class: '',
+            stretchy: false,
+            textContent: '('
+        });
+
+        const labelNum = createAndAppendElement(labelLeaf, 'mn',{
+            class: 'matheq-label-num',
+            id: labelId,
+            textContent: '0'
+        });
+
+        const labelRightBrace = createAndAppendElement(labelLeaf, 'mo',{
+            class: '',
+            stretchy: false,
+            textContent: ')'
+        });
+        this.dom.labels[labelId] = label.querySelector(`#${labelId}`);
+        return label;
+    }
+
+    orderLabelNum(){
+        requestAnimationFrame(function(){
+            Array.from(this.dom.container.querySelectorAll(".matheq-label-num")).forEach((numLabel,index)=>{
+                numLabel.textContent = `${index+1}`;
+            });
+        }.bind(this));
     }
 
     ////////////////////////////////////////////////////////////////
@@ -292,55 +342,6 @@ class MathEditor {
         delete state.latex;
     }
 
-    //////////////////////////////////////////////////////
-
-    createLabelDom(id){
-        const labelId = `${id}-label-num`;
-
-        const label = createAndAppendElement(null, 'div', {
-            class: 'mathnote-label katex'
-        });
-
-        const mathDom = createAndAppendElement(label, 'math');
-        mathDom.setAttribute('xmlns','http://www.w3.org/1998/Math/MathML')
-        mathDom.setAttribute('display','block');
-
-        const semantics = createAndAppendElement(mathDom, 'semantics', {
-        });
-
-        const labelLeaf = createAndAppendElement(semantics, 'mrow',{
-            class: '',
-        });
-
-        const labelLeftBrace = createAndAppendElement(labelLeaf, 'mo',{
-            class: '',
-            stretchy: false,
-            textContent: '('
-        });
-
-        const labelNum = createAndAppendElement(labelLeaf, 'mn',{
-            class: '',
-            id: labelId,
-            textContent: '0'
-        });
-
-        const labelRightBrace = createAndAppendElement(labelLeaf, 'mo',{
-            class: '',
-            stretchy: false,
-            textContent: ')'
-        });
-        this.dom.labels[labelId] = label.querySelector(`#${labelId}`);
-        return label;
-    }
-
-    orderLabelNum(){
-        requestAnimationFrame(function(){
-            Array.from(this.dom.container.querySelectorAll(".matheq-label-num")).forEach((numLabel,index)=>{
-                numLabel.textContent = `${index+1}`;
-            });
-        }.bind(this));
-    }
-
     handleTextKeydown(event, textArea, textModeMatheq) {
         const focusState = this.states[this.focusId];
         if(this.isComposing) return;
@@ -370,28 +371,31 @@ class MathEditor {
         }
     }
 
+    ////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////
+
     deleteFocus(){
         const deleteId = this.focusId;
-        const previosMatheq = this.dom.blocks[deleteId]?.previousSibling;
-        if(!previosMatheq) return;
+        const previosBlock = this.dom.blocks[deleteId]?.previousSibling;
+        if(!previosBlock) return;
         this.dom.blocks[deleteId].remove();
-        const previosId = previosMatheq.id;
+        const previosId = previosBlock.id;
         this.focusId = previosId;
         delete this.dom.blocks[deleteId];
         delete this.states[deleteId];
-        delete this.mathfields[deleteId];
-        this.mathfields[previosId].focus();
+        previosBlock.focus();
     }
 
     moveFocusUpDown(event, block) {
-        if (event.key==='ArrowDown' && block.nextSibling) {
-        	const nextId = block.nextSibling.id;
-        	this.mathfields[nextId]?.focus();
-        	this.focusId = nextId;
-        } else if (event.key==='ArrowUp' && block.previousSibling) {
-        	const previosId = block.previousSibling.id;
-        	this.mathfields[previosId]?.focus();
-        	this.focusId = previosId;
+        const nextBlock = block.nextSibling;
+        const previosBlock = block.previousSibling;
+        
+        if (event.key==='ArrowDown' && nextBlock) {
+        	nextBlock.focus();
+        	this.focusId = nextBlock.id;
+        } else if (event.key==='ArrowUp' && previosBlock) {
+        	previosBlock.focus();
+        	this.focusId = previosBlock.id;
         }
     }
 

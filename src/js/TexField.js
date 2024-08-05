@@ -91,13 +91,13 @@ class TexField {
             this.background.lineStyle = '#888';
             this.background.color = '#333';
             this.changeBackground();
-            this.dom.container.classList.add("dark");
+            document.body.classList.add("dark");
         } else { // light mode
             this.dom.favicon.href = "./img/TexField.light.png";
             this.background.lineStyle = this._background.lineStyle;
             this.background.color = this._background.color;
             this.changeBackground();
-            this.dom.container.classList.remove("dark");
+            document.body.classList.remove("dark");
         }
     }
 
