@@ -30,7 +30,7 @@ function findParentWithSelector(element, cssSelector) {
         if (currentElement === document.body) return null;
         if (currentElement.matches(cssSelector)) return currentElement;
         currentElement = currentElement.parentElement;
-    }
+    };
     return null;
 }
 
