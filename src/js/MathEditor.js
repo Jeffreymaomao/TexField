@@ -19,6 +19,9 @@ class MathEditor {
         this.katex = window.katex;
         if(!this.katex) throw Error("KaTeX not defined!!!");
         if(!window.MathEditors) window.MathEditors = [];
+
+        this.katexOutput = 'html';// 'html', 'mathml', 'htmlAndMathml'
+        this.katexOutput = 'htmlAndMathml';// 'html', 'mathml', 'htmlAndMathml'
         window.MathEditors.push(this);
         this.initializeDom();
         if(config.states) this.loadStates(config.states, config.order);
@@ -93,6 +96,7 @@ class MathEditor {
         mathBlock.appendChild(label);
 
         this.orderLabelNum();
+        checkIsEmpty();
 
         // ------
 
@@ -159,11 +163,13 @@ class MathEditor {
         try {
             mathRenderLatexArea.classList.remove("error");
             this.katex.render(mathTextArea.value, mathRenderLatexArea, {
+                fleqn: true,
                 displayMode: true,
-                output: 'mathml', // 'html', 'mathml', 'htmlAndMathml'
-                throwOnError: true
+                output: this.katexOutput,
+                throwOnError: true,
             });
         } catch(err){
+            if(!err instanceof this.katex.ParseError) return;
             const katexParseError = err.message;
             mathRenderLatexArea.classList.add("error");
             mathRenderLatexArea.innerText = katexParseError.replace('KaTeX parse error:','');
@@ -230,7 +236,7 @@ class MathEditor {
     orderLabelNum(){
         requestAnimationFrame(function(){
             Array.from(this.dom.container.querySelectorAll(".mathnote-label")).forEach((numLabel,index)=>{
-                numLabel.innerHTML = this.katex.renderToString(`(${index+1})`, {output: 'mathml'});;
+                numLabel.innerHTML = this.katex.renderToString(`(${index+1})`, {output: this.katexOutput});;
             });
         }.bind(this));
     }

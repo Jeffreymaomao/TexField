@@ -22,7 +22,7 @@ module.exports = {
                 test: /\.(otf|eot|ttf|woff|woff2)$/i,
                 type: 'asset/resource',
                 generator: {
-                    filename: 'font/[name][ext][query]'
+                    filename: 'fonts/[name][ext][query]'
                 }
             },
             {

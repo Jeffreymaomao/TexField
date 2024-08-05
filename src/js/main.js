@@ -1,7 +1,8 @@
 import '../css/normalize.css';
-import '../css/style.css';
+import '../css/katex-0.16.11.min.css';
 import '../css/matheditor.css';
-// import '../css/katex-0.16.11.min.css';
+import '../css/style.css';
+
 import TexField from './TexField.js';
 
 window.addEventListener("load", (e)=>{

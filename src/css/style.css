@@ -18,12 +18,14 @@ body {
 }
 
 .freemath-canvas {
+/*    border: 1px solid red;*/
 }
 
 .freemath-path-container {
 }
 
 .freemath-note-container {
+/*    border: 1px solid blue;*/
 }
 
 .note {
@@ -35,7 +37,7 @@ body {
     border: 1px solid #888;
     background-color: white;
     border-radius: 6px;
-    cursor: move;
+    cursor: grab;
     transform: translate(-50%, -50%);
 }
 
