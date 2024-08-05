@@ -114,6 +114,12 @@ class TexField {
         this.windowSize = { x: window.innerWidth, y: window.innerHeight };
     }
 
+    checkTranslate() {
+        const rect = this.dom.noteContainer.getBoundingClientRect();
+        if(this.translate.x!=rect.x) this.translate.x=rect.x;
+        if(this.translate.y!=rect.y) this.translate.y=rect.y;
+    }
+
     containerDropEvent(e) {
         this.preventDefaults(e);
 
@@ -225,23 +231,30 @@ class TexField {
 
     containerMouseDownEvent(e) {
         // remove focus
+        this.checkTranslate();
         Object.values(this.dom.notes).forEach(note => { note.classList.remove('focus'); })
         Object.values(this.dom.paths).forEach(path => { path.dom.classList.remove('focus'); })
         const targetClassList = e.target.classList;
         const targetIsNote = targetClassList.contains('note')
         const targetIsPath = targetClassList.contains('path');
         const parentNoteDom = findParentWithSelector(e.target, '.note');
+
         
-        if(!targetIsNote && !targetIsPath){
-            this.focusNote = null;
-            if (!parentNoteDom) {
-                this.isDraggingCanvas = true;
-                this.draggingCanvasStart.x = e.clientX;
-                this.draggingCanvasStart.y = e.clientY;
-                this.dom.container.classList.add("dragging");
+        if (!parentNoteDom) {
+            // if not inside note => dragging canvas
+            this.isDraggingCanvas = true;
+            this.draggingCanvasStart.x = e.clientX;
+            this.draggingCanvasStart.y = e.clientY;
+            this.dom.container.classList.add("dragging");
+            if(!targetIsPath){
+                this.focusNote = null; 
             }
+            // if(!targetIsNote && !targetIsPath){
+            //     this.focusNote = null; 
+            // }
             return;
         }
+        
 
         if (e.shiftKey && !this.drawingPath && !this.dom.drawingPath) {
             // start to draw path
@@ -253,7 +266,8 @@ class TexField {
             const pathStart = { x: centerX, y: centerY, id: parentNoteDom.id };
             this.dom.drawingPath = this.createBezierCurve(pathStart, pathStart);
             this.pathStart = pathStart;
-        } else if(targetIsNote) {
+        // } else if(targetIsNote) {
+        } else if(parentNoteDom) {
             // focus note
             this.focusNote = parentNoteDom;
             this.focusNote.classList.add("focus");
@@ -414,10 +428,10 @@ class TexField {
         this.smoothMoveTo(targetTranslate, 200);
         const centerMathEditor = window.MathEditors.find(m => m.id === id);
         if (!centerMathEditor) return;
-        const mathfields = Object.values(centerMathEditor.mathfields);
-        const lastMathfield = mathfields[mathfields.length - 1];
-        if (!lastMathfield) lastMathfield;
-        lastMathfield.focus();
+        const blocks = Object.values(centerMathEditor.dom.blocks);
+        const lastBlock = blocks[blocks.length - 1];
+        if (!lastBlock) lastBlock;
+        lastBlock.focus();
     }
 
     getState() {
@@ -458,6 +472,7 @@ class TexField {
     }
 
     exportState(filename) {
+        this.checkTranslate();
         const states = this.getState();
         // ------
         const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(states, null, 4));
@@ -538,6 +553,8 @@ class TexField {
     // --- below is to print PDF
 
     printInfiniteCanvas() {
+        this.checkTranslate();
+        const printPadding = 20; // px
         const range = {
             xmin: Infinity,
             ymin: Infinity,
@@ -564,11 +581,13 @@ class TexField {
             if (ymax > range.ymax) range.ymax = ymax;
         });
         this.smoothMoveTo({
-            x: this.translate.x-range.xmin,
-            y: this.translate.y-range.ymin
+            x: this.translate.x-range.xmin + printPadding,
+            y: this.translate.y-range.ymin + printPadding
         }, 200).then(()=>{
-            const pWidth = (range.xmax - range.xmin);
-            const pHeight = (range.ymax - range.ymin);
+            const pWidth = (range.xmax - range.xmin) + 2*printPadding;
+            const pHeight = (range.ymax - range.ymin) + 2*printPadding;
+
+            console.log(pWidth, pHeight);
 
             addStyle(`@page {size: ${pWidth}px ${pHeight}px; margin: 0;}`)
             document.title = `TexField-${getTime()}`;
