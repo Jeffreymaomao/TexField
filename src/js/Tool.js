@@ -23,6 +23,17 @@ function createAndAppendElement(parent, tag, attributes = {}) {
     return element;
 }
 
+function findParentWithSelector(element, cssSelector) {
+    if (!element) return null;
+    let currentElement = element;
+    while (currentElement) {
+        if (currentElement === document.body) return null;
+        if (currentElement.matches(cssSelector)) return currentElement;
+        currentElement = currentElement.parentElement;
+    }
+    return null;
+}
+
 function hash(str) {
     let hash = 0;
     for (let i = 0; i < str.length; i++) {
@@ -63,9 +74,10 @@ function addStyle(style) {
     document.head.appendChild(styleSheet);
 }
 
-export default {
+export {
     createAndAppendElement,
     hash,
     getTime,
-    addStyle
-}
+    addStyle,
+    findParentWithSelector
+};

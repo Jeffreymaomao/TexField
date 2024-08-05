@@ -3,10 +3,11 @@ import {
     createAndAppendElement,
     hash,
     getTime,
-    addStyle
+    addStyle,
+    findParentWithSelector
 } from './Tool.js';
 
-class Freemath {
+class TexField {
     constructor(config = {}) {
         this.dom = {};
         this.translate = { x: 0, y: 0 };
@@ -31,7 +32,7 @@ class Freemath {
         this.windowSize = { x: window.innerWidth, y: window.innerHeight };
         const localStorageDarkMode = window.localStorage.getItem("isDarkMode");
         this.isDarkMode = `${localStorageDarkMode}` ? localStorageDarkMode === 'true' : (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
-        this.isUserToggleDarkLightMode = `${localStorageDarkMode}` ? localStorageDarkMode === 'true' : false;
+        this.isUserToggleDarkLightMode = `${localStorageDarkMode}` ? true : false;
     }
 
     initializeDom() {
@@ -86,13 +87,13 @@ class Freemath {
     changeDarkLightModeEvent(e) {
         if (!this.isUserToggleDarkLightMode || e) this.isDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
         if (this.isDarkMode) { // dark mode
-            this.dom.favicon.href = "./img/freemath.dark.png";
+            this.dom.favicon.href = "./img/TexField.dark.png";
             this.background.lineStyle = '#888';
             this.background.color = '#333';
             this.changeBackground();
             this.dom.container.classList.add("dark");
         } else { // light mode
-            this.dom.favicon.href = "./img/freemath.light.png";
+            this.dom.favicon.href = "./img/TexField.light.png";
             this.background.lineStyle = this._background.lineStyle;
             this.background.color = this._background.color;
             this.changeBackground();
@@ -229,7 +230,7 @@ class Freemath {
         const targetClassList = e.target.classList;
         const targetIsNote = targetClassList.contains('note')
         const targetIsPath = targetClassList.contains('path');
-        const parentNoteDom = this.findParentWithSelector(e.target, '.note');
+        const parentNoteDom = findParentWithSelector(e.target, '.note');
         
         if(!targetIsNote && !targetIsPath){
             this.focusNote = null;
@@ -387,23 +388,6 @@ class Freemath {
     }
 
     toggleFullScreen() {
-        // const centerBefore = {
-        //     x: window.innerWidth*0.5,
-        //     y: window.innerHeight*0.5
-        // };
-        // const intervalId = setInterval(() => {
-        //     if (document.fullscreenElement || document.exitFullscreen) {
-        //         const centerAfter = {
-        //             x: window.innerWidth*0.5,
-        //             y: window.innerHeight*0.5
-        //         };
-        //         this.translate.x += centerAfter.x - centerBefore.x;
-        //         this.translate.y += centerAfter.y - centerBefore.y;
-        //         this.moveToTranslation();
-        //         clearInterval(intervalId);
-        //     }
-        // }, 100);
-
         if (!document.fullscreenElement) {
             document.documentElement.requestFullscreen();
         } else if (document.exitFullscreen) {
@@ -452,9 +436,6 @@ class Freemath {
             const dom = this.dom.noteContainer.querySelector(`#${id}`);
             if (!dom) return;
             const order = Array.from(dom.querySelectorAll("div")).filter(m => m.id.includes(`${id}-`)).map(m => m.id);
-            // const noteRect = dom.getBoundingClientRect();
-            // const centerX = noteRect.left + (noteRect.width*0.5);
-            // const centerY = noteRect.top + (noteRect.height*0.5);
             const centerX = parseFloat(dom.style.left.replace('px', ''))
             const centerY = parseFloat(dom.style.top.replace('px', ''))
             const state = {
@@ -511,17 +492,6 @@ class Freemath {
         path.setAttribute('d', `M ${x1} ${y1} C ${cx1} ${cy1}, ${cx2} ${cy2}, ${x2} ${y2}`);
     }
 
-    findParentWithSelector(element, cssSelector) {
-        if (!element) return null;
-        let currentElement = element;
-        while (currentElement) {
-            if (currentElement === document.body) return null;
-            if (currentElement.matches(cssSelector)) return currentElement;
-            currentElement = currentElement.parentElement;
-        }
-        return null;
-    }
-
     addNote(x, y, id = null, createTime = null, state = null, order = null) {
         id = id || hash(`${x}-${y}-${Date.now()}`.padStart(50, '0')).slice(0, 10)
         // ---
@@ -529,17 +499,17 @@ class Freemath {
             class: 'note',
             id: id,
             draggable: false,
-            style: `display: block; absolute; top: ${y}px; left: ${x}px; min-width: 300px;`,
+            style: `display: block; absolute; top: ${y}px; left: ${x}px;`,
             dataset: {
                 createTime: createTime || getTime()
             }
         });
-        // const mathEditor = new MathEditor({
-        //     parent: note,
-        //     id: id,
-        //     states: state,
-        //     order: order
-        // });
+        const mathEditor = new MathEditor({
+            parent: note,
+            id: id,
+            states: state,
+            order: order
+        });
         // ---
         this.dom.notes[id] = note;
     }
@@ -601,7 +571,7 @@ class Freemath {
             const pHeight = (range.ymax - range.ymin);
 
             addStyle(`@page {size: ${pWidth}px ${pHeight}px; margin: 0;}`)
-            document.title = `Freemath-${getTime()}`;
+            document.title = `TexField-${getTime()}`;
 
             const restorePosition = () => {
                 // reset
@@ -616,4 +586,4 @@ class Freemath {
     }
 }
 
-export default Freemath;
+export default TexField;

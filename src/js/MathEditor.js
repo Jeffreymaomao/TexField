@@ -1,19 +1,24 @@
+import {
+    createAndAppendElement,
+    hash,
+    getTime,
+    findParentWithSelector
+} from './Tool.js';
+
 class MathEditor {
     constructor(config = {}) {
-        this.id = config.id || this.hash(Date.now().toString());
+        this.id = config.id || hash(Date.now().toString());
 	    this.dom = {};
         this.dom.parent = config.parent || document.body;
-        this.mathquill = MathQuill.getInterface(2);
-        this.createTime = this.getTime();
+        this.createTime = getTime();
         this.id_prefix = this.config?.id_prefix || this.id;
         this._id_num = 1;
         this.focusId = null;
         this.mathfields = {};
         this.states = {};
         this.isComposing = false;
-
-        // undo method
-        // https://stackoverflow.com/questions/14747537/implementin-undo-redo-in-math-editor
+        this.katex = window.katex;
+        if(!this.katex) throw Error("KaTeX not defined!!!");
 
         if(!window.MathEditors){
             window.MathEditors = [];
@@ -36,48 +41,14 @@ class MathEditor {
     }
 
     initializeDom() {
-        this.dom.container = this.createAndAppendElement(this.dom.parent, "div", {
+        this.dom.container = createAndAppendElement(this.dom.parent, "div", {
             class: "mathnote-container",
             id: this.id
         });
 
-        this.dom.matheqs = {};
+        this.dom.blocks = {};
         this.dom.labels = {};
         this.createEquationDom();
-    }
-
-    loadStates(states, order=null){
-        this.mathfields = {};
-        this.dom.container.innerHTML = '';
-        // ---
-        const progressState = (state)=>{
-            const id = state.id;
-            const id_num = parseInt(id.split('-').pop());
-            if(id_num >= this._id_num) this._id_num = id_num+1;
-            const {matheq, mathfield} = this.addMathModeArea(state);
-            this.dom.container.appendChild(matheq);
-            this.states[id] = state;
-
-            if(state.latex){
-                mathfield.latex(state.latex);
-            } else if (state.text) {
-                this.addTextModeArea(matheq, mathfield, state);
-            }
-            // this.focusId = id;
-            // mathfield.focus();
-        }
-        // ---
-        if(order){
-            order.forEach(id=>{
-                progressState(states[id]);
-            });
-        } else {
-            Object.values(states).forEach((state)=>{
-                progressState(state);
-            });
-        }
-
-        this.orderLabelNum();
     }
 
     createEquationDom() {
@@ -88,120 +59,198 @@ class MathEditor {
         	latex: '',
         };
 
-        const {matheq, mathfield} = this.addMathModeArea(state);
+        const block = this.addMathModeArea(state);
 
-        if (!this.dom.container.lastChild || !this.dom.matheqs[this.focusId] || !this.dom.matheqs[this.focusId].nextSibling) {
-            this.dom.container.appendChild(matheq); // the container is empty || focus matheq not found || focus matheq next is empty
-        } else if (this.dom.matheqs[this.focusId].nextSibling) {
-            this.dom.container.insertBefore(matheq, this.dom.matheqs[this.focusId].nextSibling); // focus matheq next is not empty
+        if (!this.dom.container.lastChild || !this.dom.blocks[this.focusId] || !this.dom.blocks[this.focusId].nextSibling) {
+            this.dom.container.appendChild(block); // the container is empty || focus block not found || focus block next is empty
+        } else if (this.dom.blocks[this.focusId].nextSibling) {
+            this.dom.container.insertBefore(block, this.dom.blocks[this.focusId].nextSibling); // focus block next is not empty
         }
 
         this.orderLabelNum();
 
         this.states[id] = state;
         this.focusId = id;
-        mathfield.focus();
         return true;
     }
 
-    createLabelDom(id){
-        const labelId = `${id}-label-num`;
-        const label = this.createAndAppendElement(null, 'div', {
-            class: 'mathnote-label'
-        });
-        const labelLeaf = this.createAndAppendElement(label, 'span',{
-            class: 'mq-non-leaf'
-        });
-        const labelLeftBrace = this.createAndAppendElement(labelLeaf, 'span',{
-            class: 'mq-scaled mq-paren',
-            style: 'transform: scale(0.999983, 1.1999)',
-            textContent: '('
-        });
-
-        const labelNum = this.createAndAppendElement(labelLeaf, 'span',{
-            class: 'mq-non-leaf matheq-label-num',
-            id: labelId,
-            textContent: '0'
-        });
-
-        const labelRightBrace = this.createAndAppendElement(labelLeaf, 'span',{
-            class: 'mq-scaled mq-paren',
-            style: 'transform: scale(0.999983, 1.1999)',
-            textContent: ')'
-        });
-        this.dom.labels[labelId] = label.querySelector(`#${labelId}`);
-        return label;
-    }
-
-    orderLabelNum(){
-        requestAnimationFrame(function(){
-            Array.from(this.dom.container.querySelectorAll(".matheq-label-num")).forEach((numLabel,index)=>{
-                numLabel.textContent = `${index+1}`;
-            });
-        }.bind(this));
-    }
+    ////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////
 
     addMathModeArea(state){
         const id = state.id;
-        const matheq = this.createAndAppendElement(null, "div", {
-            class: "mathnote-matheq",
+        const mathBlock = createAndAppendElement(null, "div", {
+            class: "mathnote-block",
+            tabIndex: 0,
             id: id
         });
-
-        const label = this.createLabelDom(id);
-
-        const mathTextArea = this.createAndAppendElement(null, 'textarea', {
+        const mathTextArea = createAndAppendElement(mathBlock, 'textarea', {
             class: 'mathnote-math-textarea',
             autocapitalize: 'off',
             autocomplete: 'off',
             autocorrect: 'off',
             spellcheck: 'false',
             id: `${id}-mathmode-textarea`,
+            placeholder: 'Input some LaTeX...',
+            tabIndex: -1,
+            rows: 1,
+            // value: 'ds^2=c^2d\\tau^2=\\left(1-\\frac{r_s}{r}\\right)c^2dt^2\n\t-\\left(1-\\frac{r_s}{r}\\right)^{-1}dr^2-r^2d\\Omega^2',
+            value: 'x=\\frac{-b\\pm\\sqrt{b^2-4ac}}{2a}',
         });
-        mathTextArea.setAttribute('x-palm-disable-ste-all', 'true');
 
-        const mathfield = this.mathquill.MathField(matheq, {
-            substituteTextarea: function (){ return mathTextArea;},
-            handlers: {
-                edit: function(e) {
-                    state.latex = mathfield.latex();
-                    state.isEmpty = state.latex==='';
-                },
-                enter: function() {
-                    this.createEquationDom();
-                }.bind(this),
+        const mathRenderLatexArea = createAndAppendElement(mathBlock, 'div', {
+            class: 'mathnote-latex'
+        });
+        
+        setTimeout(()=>{
+            this.adjustTextAreaSize(mathTextArea);
+            this.renderLaTex(mathTextArea, mathRenderLatexArea);
+            mathBlock.focus();
+        },0);
+
+        const checkIsEmpty = ()=>{
+            if(mathTextArea.value.trim()===''){
+                mathRenderLatexArea.classList.add('isEmpty');
+            }else{
+                mathRenderLatexArea.classList.remove('isEmpty');
             }
-        });
+        }
+        // ------
 
-        matheq.appendChild(label);
+        // variables use to check is (block/textarea) is focus or not
+        let mathBlockFocus = false;
+        let mathTextAreaFocus = false;
+
+        // math block events
+        mathBlock.addEventListener('focus',function(e) {
+            mathBlockFocus = true;
+            mathBlock.classList.add('focus');
+            mathRenderLatexArea.classList.remove('isEmpty');
+            checkIsEmpty();
+        }.bind(this), false);
+
+        mathBlock.addEventListener('blur',function(e) {
+            mathBlockFocus = false;
+            mathBlock.classList.remove('focus');
+
+            // using a setTimeout function to wait (if) textarea focus
+            setTimeout(()=>{
+                if(!mathTextAreaFocus){
+                    mathBlock.classList.remove('editing');
+                }
+            },0);
+        }.bind(this), false);
+
+        mathBlock.addEventListener('keydown', function(e) {
+            if ((e.ctrlKey || e.metaKey) && e.key==='/'){
+                const editing = mathBlock.classList.toggle('editing');
+                if(editing){
+                    // when it is editing
+                    this.adjustTextAreaSize(mathTextArea);
+                    mathTextArea.focus();
+                } else {
+                    // when it is not editing
+                    mathBlock.focus(); // focus move to block
+                }
+            } else if (e.key==='Enter') {
+                console.log("new equation");
+            }
+        }.bind(this), false);
+        // ------
+        // math textarea events
+        mathTextArea.addEventListener('input', function(e) {
+            this.adjustTextAreaSize(mathTextArea);
+            this.renderLaTex(mathTextArea, mathRenderLatexArea);
+            checkIsEmpty();
+        }.bind(this), false);
+
         mathTextArea.addEventListener('keydown', function(e) {
-            this.handleMathKeydown(e, matheq, mathfield);
-        }.bind(this), false);
-        matheq.addEventListener("click", function(e) {
-            this.focusId = id;
+            this.mathTextAreaKeydownEvent(e, mathBlock, mathTextArea, mathRenderLatexArea);
         }.bind(this), false);
 
-        this.dom.matheqs[id] = matheq;
-        this.mathfields[id] = mathfield;
+        mathTextArea.addEventListener('focus', function(e) {
+            mathTextAreaFocus = true;
+            mathBlock.classList.add('focus');
+        }.bind(this), false);
+        mathTextArea.addEventListener('blur', function(e) {
+            mathTextAreaFocus = false;
+            mathBlock.classList.remove('focus');
 
-        return {matheq, mathfield};
+            // using a setTimeout function to wait (if) block focus
+            setTimeout(()=>{
+                if(!mathBlockFocus){
+                    mathBlock.classList.remove('editing');
+                }
+            },100);
+        }.bind(this), false);
+        // ------
+        this.dom.blocks[id] = mathBlock;
+
+        const label = this.createLabelDom(id);
+        mathBlock.appendChild(label);
+        return mathBlock;
     }
+
+    renderLaTex(mathTextArea, mathRenderLatexArea){
+        try {
+            mathRenderLatexArea.classList.remove("error");
+            this.katex.render(mathTextArea.value, mathRenderLatexArea, {
+                displayMode: true,
+                output: 'mathml', // 'html', 'mathml', 'htmlAndMathml'
+                throwOnError: true
+            });
+        } catch(err){
+            const katexParseError = err.message;
+            mathRenderLatexArea.classList.add("error");
+            mathRenderLatexArea.innerText = katexParseError.replace('KaTeX parse error:','');
+        }
+    }
+
+    adjustTextAreaSize(textarea) {
+        textarea.style.height = 'auto';
+        textarea.style.width = 'auto';
+        textarea.style.height = (textarea.scrollHeight) + 'px';
+        textarea.style.width = (textarea.scrollWidth) + 'px';
+    }
+
+    mathTextAreaKeydownEvent(e, mathBlock, mathTextArea, mathRenderLatexArea) {
+        const isEmpty = mathTextArea.value==='';
+        // const focusState = this.states[this.focusId];
+        if (e.key === 'Tab') {
+            e.preventDefault();
+            const start = mathTextArea.selectionStart;
+            const end = mathTextArea.selectionEnd;
+
+            const value = mathTextArea.value;
+            mathTextArea.value = value.substring(0, start) + '\t' + value.substring(end);
+            mathTextArea.selectionStart = mathTextArea.selectionEnd = start + 1;
+
+        } else if ((e.ctrlKey || e.metaKey) && e.key==='/'){
+            mathBlock.classList.remove('focus');
+        } else if(e.key==='ArrowUp' || e.key==='ArrowDown') {
+        } else if (isEmpty && e.key==='Backspace' && !e.shiftKey && !e.ctrlKey && !e.altKey && !e.metaKey){
+        } else if(isEmpty && (e.ctrlKey || e.metaKey) && e.key==='"'){
+        }
+    }
+
+    ////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////
 
     addTextModeArea(matheq, mathfield, _state){
         const id = matheq.id;
         const state = this.states[id] || _state;
         if(!state) return;
-        const newMatheq = this.createAndAppendElement(null, "div", {
-            class: "mathnote-matheq textmode",
+        const newMatheq = createAndAppendElement(null, "div", {
+            class: "mathnote-block textmode",
             id: id
         });
         matheq.replaceWith(newMatheq);
 
-        const textContainer = this.createAndAppendElement(newMatheq, "div", {
+        const textContainer = createAndAppendElement(newMatheq, "div", {
             class: "mathnote-text-container"
         });
 
-        const textArea = this.createAndAppendElement(textContainer, "textarea", {
+        const textArea = createAndAppendElement(textContainer, "textarea", {
             class: "mathnote-text-textarea",
             autocapitalize: 'off',
             id: `${id}-textmode-textarea`,
@@ -251,24 +300,58 @@ class MathEditor {
         }, 0);
 
         this.orderLabelNum();
-        this.dom.matheqs[id] = newMatheq;
+        this.dom.blocks[id] = newMatheq;
         this.mathfields[id] = textArea;
         delete state.latex;
     }
 
-    handleMathKeydown(event, matheq, mathfield) {
-        const focusState = this.states[this.focusId];
-        if (event.key==='ArrowUp' || event.key==='ArrowDown') {
-            setTimeout(function(){
-                if(!window.needFocusUpDown) return;
-                window.needFocusUpDown = false;
-                this.moveFocusUpDown(event, matheq);
-            }.bind(this), 0);
-        } else if (focusState.isEmpty && event.key==='Backspace' && !event.shiftKey && !event.ctrlKey && !event.altKey && !event.metaKey){
-            this.deleteFocus();
-        } else if(focusState.isEmpty && (event.ctrlKey || event.metaKey) && event.key==='/'){
-            this.addTextModeArea(matheq, mathfield);
-        }
+    //////////////////////////////////////////////////////
+
+    createLabelDom(id){
+        const labelId = `${id}-label-num`;
+
+        const label = createAndAppendElement(null, 'div', {
+            class: 'mathnote-label katex'
+        });
+
+        const mathDom = createAndAppendElement(label, 'math');
+        mathDom.setAttribute('xmlns','http://www.w3.org/1998/Math/MathML')
+        mathDom.setAttribute('display','block');
+
+        const semantics = createAndAppendElement(mathDom, 'semantics', {
+        });
+
+        const labelLeaf = createAndAppendElement(semantics, 'mrow',{
+            class: '',
+        });
+
+        const labelLeftBrace = createAndAppendElement(labelLeaf, 'mo',{
+            class: '',
+            stretchy: false,
+            textContent: '('
+        });
+
+        const labelNum = createAndAppendElement(labelLeaf, 'mn',{
+            class: '',
+            id: labelId,
+            textContent: '0'
+        });
+
+        const labelRightBrace = createAndAppendElement(labelLeaf, 'mo',{
+            class: '',
+            stretchy: false,
+            textContent: ')'
+        });
+        this.dom.labels[labelId] = label.querySelector(`#${labelId}`);
+        return label;
+    }
+
+    orderLabelNum(){
+        requestAnimationFrame(function(){
+            Array.from(this.dom.container.querySelectorAll(".matheq-label-num")).forEach((numLabel,index)=>{
+                numLabel.textContent = `${index+1}`;
+            });
+        }.bind(this));
     }
 
     handleTextKeydown(event, textArea, textModeMatheq) {
@@ -302,17 +385,15 @@ class MathEditor {
 
     deleteFocus(){
         const deleteId = this.focusId;
-        const previosMatheq = this.dom.matheqs[deleteId]?.previousSibling;
+        const previosMatheq = this.dom.blocks[deleteId]?.previousSibling;
         if(!previosMatheq) return;
-        this.dom.matheqs[deleteId].remove();
+        this.dom.blocks[deleteId].remove();
         const previosId = previosMatheq.id;
         this.focusId = previosId;
-        delete this.dom.matheqs[deleteId];
+        delete this.dom.blocks[deleteId];
         delete this.states[deleteId];
         delete this.mathfields[deleteId];
         this.mathfields[previosId].focus();
-        // if previous is mathmode => mathfield is mathquill mathfield
-        // if previous is textmode => mathfield is textarea 
     }
 
     moveFocusUpDown(event, matheq) {
@@ -327,55 +408,36 @@ class MathEditor {
         }
     }
 
-    getTime() {
-        const now = new Date();
-        const year = now.getFullYear();
-        const month = String(now.getMonth() + 1).padStart(2, '0'); // Months are zero-based
-        const day = String(now.getDate()).padStart(2, '0');
-        const hours = String(now.getHours()).padStart(2, '0');
-        const minutes = String(now.getMinutes()).padStart(2, '0');
-        const seconds = String(now.getSeconds()).padStart(2, '0');
-        const milliseconds = String(now.getMilliseconds()).padStart(2, '0');
-        
-        return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}:${milliseconds}`;
-    }
+    loadStates(states, order=null){
+        this.mathfields = {};
+        this.dom.container.innerHTML = '';
+        // ---
+        const progressState = (state)=>{
+            const id = state.id;
+            const id_num = parseInt(id.split('-').pop());
+            if(id_num >= this._id_num) this._id_num = id_num+1;
+            const {matheq, mathfield} = this.addMathModeArea(state);
+            this.dom.container.appendChild(matheq);
+            this.states[id] = state;
 
-    hash(str){
-        let hash = 0;
-        for (let i = 0; i < str.length; i++) {
-            const char = str.charCodeAt(i);
-            hash = (hash << 5) - hash + char;
-            hash |= 0; // Convert to 32-bit integer
+            if(state.latex){
+                mathfield.latex(state.latex);
+            } else if (state.text) {
+                this.addTextModeArea(matheq, mathfield, state);
+            }
         }
-        hash = Math.abs(hash);
-        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-        let result = '';
-        while (hash > 0) {
-            const shift = Math.floor(Math.random() * 100);
-            result = chars[(hash+shift) % 26] + result;
-            hash = Math.floor(hash / 26);
+        // ---
+        if(order){
+            order.forEach(id=>{
+                progressState(states[id]);
+            });
+        } else {
+            Object.values(states).forEach((state)=>{
+                progressState(state);
+            });
         }
-        return result;
-    }
 
-    createAndAppendElement(parent, tag, attributes = {}) {
-        const element = document.createElement(tag);
-
-        // class 
-        if (attributes.class) {
-            attributes.class.split(" ").forEach(className => element.classList.add(className));
-            delete attributes.class; // delete class in attributes
-        }
-        // dataset
-        if (attributes.dataset) {
-            Object.keys(attributes.dataset).forEach(key => element.dataset[key] = attributes.dataset[key]);
-            delete attributes.dataset; // delete dataset in attributes
-        }
-        // other attributes
-        Object.keys(attributes).forEach(key => element[key] = attributes[key]);
-
-        if (parent) parent.appendChild(element);
-        return element;
+        this.orderLabelNum();
     }
 }
 

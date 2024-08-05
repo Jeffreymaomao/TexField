@@ -1,0 +1,192 @@
+/* ---- */
+
+.mathnote-container {
+    display: block;
+    width: 100%;
+    border-style: solid;
+    border-color: gray;
+    border-width: 0.5px 0px;
+}
+
+/**********************************
+ * mathnote one block (math mode) *
+ **********************************/
+
+/** ---
+ * LaTeX is not editing (default)
+ ** --- */
+
+.mathnote-block {
+    border-color: gray;
+    border-style: solid;
+    border-width: 0.5px 1px;
+    min-height: 47px;
+}
+
+.mathnote-block.focus {
+    outline: 1px solid rgb(10,100,200);
+}
+
+.mathnote-block .mathnote-math-textarea {
+    /* textarea in math-mode*/
+    overflow: hidden;
+    vertical-align: middle;
+    white-space: nowrap;
+    resize: none;
+    border: none;
+    outline: none;
+    
+    height: auto;
+    width: auto;
+    background-color: transparent;
+    min-width: 200px;
+    padding: 15px 15px;
+    font: 14px 'Menlo', monospace;
+    -moz-tab-size : 4;
+      -o-tab-size : 4;
+         tab-size : 4;
+    /* when it is not editing */
+    display: none;
+}
+
+.mathnote-block .mathnote-latex {
+    display: block;
+    position: relative;
+    transform: none;
+    border: none;
+    background-color: transparent;
+    min-width: 200px;
+    vertical-align: bottom;
+    padding: 15px 15px;
+    cursor: text;
+    transition: height, transform 0.05s ease-out;
+}
+
+.mathnote-block .mathnote-latex::after {
+    display: none;
+    transition: height, transform 0.05s ease-out;
+}
+
+.mathnote-block .mathnote-latex.error{
+    color: var(--border-color-error);
+}
+
+.mathnote-block .mathnote-latex.isEmpty::before {
+    content: 'The LaTeX is empty...';
+    font: 14px 'Menlo', monospace;
+    color: #bbb;
+}
+
+/** ---
+ * LaTeX is editing
+ ** --- */
+
+.mathnote-latex {
+    --padding-width: 12px;
+    --background-color: rgb(240,240,240);
+    --border-color: rgb(100,100,100);
+    --border-color-error: rgb(200,30,30);
+}
+
+ /* When the LaTeX is editing => show textarea & LaTeX block */
+
+.mathnote-block.editing .mathnote-math-textarea {
+    display: block;
+    position: relative;
+}
+
+.mathnote-block.editing .mathnote-latex {
+    position: absolute;
+    bottom: 100%;
+    left: 0%;
+    transform: translate(0, -10px);
+    border-radius: 6px;
+    padding: var(--padding-width);
+    min-width: 45px;
+    background-color: var(--background-color);
+    border: 1px solid var(--border-color);
+    cursor: text;
+}
+
+.mathnote-block.editing .mathnote-latex::after {
+    content: "";
+    display: block;
+    position: absolute;
+    transform: rotate(45deg);
+    left: var(--padding-width);
+    bottom: calc(2px - var(--padding-width));
+    width: calc(var(--padding-width) * 1.414);
+    height: calc(var(--padding-width) * 1.414);
+    background-color: var(--background-color);
+    border-bottom: 1px solid var(--border-color);
+    border-right: 1px solid var(--border-color);
+    cursor: text;
+}
+
+.mathnote-block.editing .mathnote-latex.error {
+    border-color: var(--border-color-error);
+    color: var(--border-color-error);
+}
+
+.mathnote-block.editing .mathnote-latex.error::after {
+    background-color: var(--background-color);
+    border-bottom: 1px solid var(--border-color-error);
+    border-right: 1px solid var(--border-color-error);
+}
+
+/* show label */
+.mathnote-block {
+    padding-right: 35px;
+}
+
+.mathnote-label {
+    position: absolute;
+    padding-right: 2px;
+    right: 0;
+    top: 50%;
+    transform: translate(0, -50%);
+    text-align: middle;
+}
+
+/* ---------------- */
+
+/*.mathnote-block.textmode textarea.mathnote-text-textarea {
+    width: 100%;
+    overflow: hidden;
+    resize: none;
+    vertical-align: middle;
+    font-family: 'BiauKai', 'LatinModernRoman', 'Symbola',
+                 'Times New Roman', 'Times', serif;  
+    font-size: 1.15em;
+    border: none;
+    white-space: nowrap;
+}
+
+.mathnote-block.textmode .mathnote-text-textarea:focus{
+    outline: none;
+}
+
+.mathnote-block.focus {
+    box-shadow: none;
+    border-style: solid;
+    border-radius: 0px;
+    border-color: #6a93d2;
+    border-width: 1px 1px;
+
+    box-shadow: 0 0 2px #6a93d2,
+                0 0 2px #6a93d2;
+}
+
+.mathnote-block.focus {
+    box-shadow: 0 0 2px #d26a93,
+                0 0 2px #d26a93;
+    border-color: #d26a93;
+}
+
+.mathnote-block {
+    padding: 0px;
+}
+
+.mathnote-block.textmode textarea.mathnote-text-textarea {
+    padding: 14px 15px;
+}*/

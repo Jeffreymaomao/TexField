@@ -14,8 +14,7 @@ module.exports = {
         path: path.resolve(__dirname, 'dist'),
     },
     module: {
-        rules: [
-            {
+        rules: [{
                 test: /\.css$/i,
                 use: ['style-loader', 'css-loader'],
             },
@@ -55,6 +54,11 @@ module.exports = {
         ],
     },
     performance: {
-        hints: true,
+        hints: false,
+    },
+    devServer: {
+        client: {
+            overlay: false,
+        },
     },
 };
