@@ -55,7 +55,6 @@ class MathEditor {
         const id = this.createId();
         const state = {
         	id: id,
-            isEmpty: true,
         	latex: '',
         };
 
@@ -66,11 +65,8 @@ class MathEditor {
         } else if (this.dom.blocks[this.focusId].nextSibling) {
             this.dom.container.insertBefore(block, this.dom.blocks[this.focusId].nextSibling); // focus block next is not empty
         }
-
         this.orderLabelNum();
-
         this.states[id] = state;
-        this.focusId = id;
         return true;
     }
 
@@ -78,11 +74,11 @@ class MathEditor {
     ////////////////////////////////////////////////////////////
 
     addMathModeArea(state){
-        const id = state.id;
+        const blockId = state.id;
         const mathBlock = createAndAppendElement(null, "div", {
             class: "mathnote-block",
             tabIndex: 0,
-            id: id
+            id: blockId
         });
         const mathTextArea = createAndAppendElement(mathBlock, 'textarea', {
             class: 'mathnote-math-textarea',
@@ -90,23 +86,16 @@ class MathEditor {
             autocomplete: 'off',
             autocorrect: 'off',
             spellcheck: 'false',
-            id: `${id}-mathmode-textarea`,
+            id: `${blockId}-mathmode-textarea`,
             placeholder: 'Input some LaTeX...',
             tabIndex: -1,
             rows: 1,
-            // value: 'ds^2=c^2d\\tau^2=\\left(1-\\frac{r_s}{r}\\right)c^2dt^2\n\t-\\left(1-\\frac{r_s}{r}\\right)^{-1}dr^2-r^2d\\Omega^2',
             value: 'x=\\frac{-b\\pm\\sqrt{b^2-4ac}}{2a}',
         });
 
         const mathRenderLatexArea = createAndAppendElement(mathBlock, 'div', {
             class: 'mathnote-latex'
         });
-        
-        setTimeout(()=>{
-            this.adjustTextAreaSize(mathTextArea);
-            this.renderLaTex(mathTextArea, mathRenderLatexArea);
-            mathBlock.focus();
-        },0);
 
         const checkIsEmpty = ()=>{
             if(mathTextArea.value.trim()===''){
@@ -118,43 +107,33 @@ class MathEditor {
         // ------
 
         // variables use to check is (block/textarea) is focus or not
-        let mathBlockFocus = false;
-        let mathTextAreaFocus = false;
+        // let mathBlockFocus = false;
 
         // math block events
         mathBlock.addEventListener('focus',function(e) {
-            mathBlockFocus = true;
+            // mathBlockFocus = true;
             mathBlock.classList.add('focus');
             mathRenderLatexArea.classList.remove('isEmpty');
+            this.focusId = blockId;
+
+            mathTextArea.focus();
+
             checkIsEmpty();
         }.bind(this), false);
 
         mathBlock.addEventListener('blur',function(e) {
-            mathBlockFocus = false;
+            // mathBlockFocus = false;
             mathBlock.classList.remove('focus');
 
             // using a setTimeout function to wait (if) textarea focus
             setTimeout(()=>{
-                if(!mathTextAreaFocus){
-                    mathBlock.classList.remove('editing');
-                }
+                if(document.activeElement===mathTextArea) return;
+                mathBlock.classList.remove('editing');
             },0);
         }.bind(this), false);
 
         mathBlock.addEventListener('keydown', function(e) {
-            if ((e.ctrlKey || e.metaKey) && e.key==='/'){
-                const editing = mathBlock.classList.toggle('editing');
-                if(editing){
-                    // when it is editing
-                    this.adjustTextAreaSize(mathTextArea);
-                    mathTextArea.focus();
-                } else {
-                    // when it is not editing
-                    mathBlock.focus(); // focus move to block
-                }
-            } else if (e.key==='Enter') {
-                console.log("new equation");
-            }
+            this.mathBlockKeydownEvent(e, mathBlock, mathTextArea);
         }.bind(this), false);
         // ------
         // math textarea events
@@ -162,31 +141,38 @@ class MathEditor {
             this.adjustTextAreaSize(mathTextArea);
             this.renderLaTex(mathTextArea, mathRenderLatexArea);
             checkIsEmpty();
+            state.latex = mathTextArea.value;
         }.bind(this), false);
 
         mathTextArea.addEventListener('keydown', function(e) {
-            this.mathTextAreaKeydownEvent(e, mathBlock, mathTextArea, mathRenderLatexArea);
+            this.mathTextAreaKeydownEvent(e, mathBlock, mathTextArea);
         }.bind(this), false);
 
         mathTextArea.addEventListener('focus', function(e) {
-            mathTextAreaFocus = true;
             mathBlock.classList.add('focus');
         }.bind(this), false);
+        
         mathTextArea.addEventListener('blur', function(e) {
-            mathTextAreaFocus = false;
             mathBlock.classList.remove('focus');
 
             // using a setTimeout function to wait (if) block focus
             setTimeout(()=>{
-                if(!mathBlockFocus){
-                    mathBlock.classList.remove('editing');
+                if(document.activeElement===mathBlock){
+                    console.log(document.activeElement===mathBlock);
+                    return;
                 }
-            },100);
+                mathBlock.classList.remove('editing');
+            },0);
         }.bind(this), false);
         // ------
-        this.dom.blocks[id] = mathBlock;
-
-        const label = this.createLabelDom(id);
+        this.dom.blocks[blockId] = mathBlock;
+        setTimeout(()=>{
+            this.adjustTextAreaSize(mathTextArea);
+            this.renderLaTex(mathTextArea, mathRenderLatexArea);
+            mathBlock.focus();
+            this.focusId = blockId;
+        },0);
+        const label = this.createLabelDom(blockId);
         mathBlock.appendChild(label);
         return mathBlock;
     }
@@ -213,10 +199,10 @@ class MathEditor {
         textarea.style.width = (textarea.scrollWidth) + 'px';
     }
 
-    mathTextAreaKeydownEvent(e, mathBlock, mathTextArea, mathRenderLatexArea) {
-        const isEmpty = mathTextArea.value==='';
-        // const focusState = this.states[this.focusId];
+    mathTextAreaKeydownEvent(e, mathBlock, mathTextArea) {
+        // This is for textarea (LaTeX editor)
         if (e.key === 'Tab') {
+            // tab 
             e.preventDefault();
             const start = mathTextArea.selectionStart;
             const end = mathTextArea.selectionEnd;
@@ -224,12 +210,28 @@ class MathEditor {
             const value = mathTextArea.value;
             mathTextArea.value = value.substring(0, start) + '\t' + value.substring(end);
             mathTextArea.selectionStart = mathTextArea.selectionEnd = start + 1;
+        }
+    }
 
-        } else if ((e.ctrlKey || e.metaKey) && e.key==='/'){
-            mathBlock.classList.remove('focus');
-        } else if(e.key==='ArrowUp' || e.key==='ArrowDown') {
-        } else if (isEmpty && e.key==='Backspace' && !e.shiftKey && !e.ctrlKey && !e.altKey && !e.metaKey){
-        } else if(isEmpty && (e.ctrlKey || e.metaKey) && e.key==='"'){
+    mathBlockKeydownEvent(e, mathBlock, mathTextArea) {
+        // This is for block (math mode)
+        if ((e.ctrlKey || e.metaKey) && e.key==='/'){
+            const editing = mathBlock.classList.toggle('editing');
+            if(editing){
+                // when it is editing
+                this.adjustTextAreaSize(mathTextArea);
+                mathTextArea.focus();
+            } else {
+                // when it is not editing
+                mathBlock.focus(); // focus move to block
+            }
+        } else if (e.key==='Enter') {
+            if(document.activeElement===mathTextArea) return;
+            this.createEquationDom();
+        }  else if(e.key==='ArrowUp' || e.key==='ArrowDown') {
+            console.log(e.key);
+        } else if ((e.ctrlKey || e.metaKey)  && e.key==='Backspace' && !e.shiftKey && !e.altKey){
+        } else if((e.ctrlKey || e.metaKey) && e.key==='"' && !e.shiftKey && !e.altKey){
         }
     }
 
@@ -396,13 +398,13 @@ class MathEditor {
         this.mathfields[previosId].focus();
     }
 
-    moveFocusUpDown(event, matheq) {
-        if (event.key==='ArrowDown' && matheq.nextSibling) {
-        	const nextId = matheq.nextSibling.id;
+    moveFocusUpDown(event, block) {
+        if (event.key==='ArrowDown' && block.nextSibling) {
+        	const nextId = block.nextSibling.id;
         	this.mathfields[nextId]?.focus();
         	this.focusId = nextId;
-        } else if (event.key==='ArrowUp' && matheq.previousSibling) {
-        	const previosId = matheq.previousSibling.id;
+        } else if (event.key==='ArrowUp' && block.previousSibling) {
+        	const previosId = block.previousSibling.id;
         	this.mathfields[previosId]?.focus();
         	this.focusId = previosId;
         }
