@@ -1,4 +1,10 @@
-# <img src="src/img/TexField.light.png" width="40px" style="vertical-align:text-top"> TexField
+<p align="center">
+<a href='https://jeffreymaomao.github.io/TexField/dist/'>
+<img src="src/img/TexField.light.png" width="120">
+</a>
+<br>
+<h1 align='center'>TexField</h1>
+</p>
 
 **TexField** is a web application designed for creating and managing LaTeX notes on an infinitely large canvas. By leveraging [KaTeX](https://katex.org/) for LaTeX rendering, TexField enables fast and efficient display of mathematical formulas directly in your browser.
 
