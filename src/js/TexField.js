@@ -35,6 +35,10 @@ class TexField {
         this.isUserToggleDarkLightMode = `${localStorageDarkMode}` ? true : false;
     }
 
+    ////////////////////////////////////////////////////////////
+    // Web DOM node create
+    ////////////////////////////////////////////////////////////
+
     initializeDom() {
         this.dom.container = createAndAppendElement(this.dom.parent, 'div', {
             class: 'freemath-container',
@@ -84,22 +88,83 @@ class TexField {
         this.dom.noteContainer.appendChild(pathContainer);
     }
 
-    changeDarkLightModeEvent(e) {
-        if (!this.isUserToggleDarkLightMode || e) this.isDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-        if (this.isDarkMode) { // dark mode
-            this.dom.favicon.href = "./img/TexField.dark.png";
-            this.background.lineStyle = '#888';
-            this.background.color = '#333';
-            this.changeBackground();
-            document.body.classList.add("dark");
-        } else { // light mode
-            this.dom.favicon.href = "./img/TexField.light.png";
-            this.background.lineStyle = this._background.lineStyle;
-            this.background.color = this._background.color;
-            this.changeBackground();
-            document.body.classList.remove("dark");
-        }
+    ////////////////////////////////////////////////////////////
+    // Note & Path
+    ////////////////////////////////////////////////////////////
+
+    createBezierCurve(start, end, startWidth = null, endWidth = null) {
+        const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+        path.classList.add("path");
+        path.setAttribute('fill', 'none');
+        this.setBezierCurvePath(path, start, end, startWidth, endWidth);
+        this.dom.pathContainer.appendChild(path);
+        return path;
     }
+
+    setBezierCurvePath(path, start, end, startWidth = null, endWidth = null) {
+        const x1 = start.x,
+            y1 = start.y,
+            x2 = end.x,
+            y2 = end.y;
+        const w1 = (x2 - x1) * 0.7;
+        const w2 = (x2 - x1) * 0.7;
+        const cx1 = x1 + w1,
+            cy1 = y1,
+            cx2 = x2 - w2,
+            cy2 = y2;
+        path.setAttribute('d', `M ${x1} ${y1} C ${cx1} ${cy1}, ${cx2} ${cy2}, ${x2} ${y2}`);
+    }
+
+    addNote(x, y, id = null, createTime = null, state = null, order = null) {
+        id = id || hash(`${x}-${y}-${Date.now()}`.padStart(50, '0')).slice(0, 10)
+        // ---
+        const note = createAndAppendElement(this.dom.noteContainer, 'div', {
+            class: 'note',
+            id: id,
+            draggable: false,
+            style: `display: block; absolute; top: ${y}px; left: ${x}px;`,
+            dataset: {
+                createTime: createTime || getTime()
+            }
+        });
+        const mathEditor = new MathEditor({
+            parent: note,
+            id: id,
+            states: state,
+            order: order
+        });
+        // ---
+        this.dom.notes[id] = note;
+    }
+
+    centerNote(num) {
+        if (!window.MathEditors || num > window.MathEditors.length) return;
+        // num: 1,2,3,4,5,6,7,8,9
+        const lastMatheditor = window.MathEditors[num - 1];
+        if (!lastMatheditor) return;
+        const id = lastMatheditor.id;
+        if (!id) return;
+        const centerDom = document.querySelector(`#${id}`);
+        if (!centerDom) return;
+        const noteRect = centerDom.getBoundingClientRect();
+        const targetCenterX = noteRect.left + (noteRect.width * 0.5);
+        const targetCenterY = noteRect.top + (noteRect.height * 0.5);
+        const targetTranslate = {
+            x: this.translate.x + window.innerWidth * 0.5 - targetCenterX,
+            y: this.translate.y + window.innerHeight * 0.5 - targetCenterY
+        };
+        this.smoothMoveTo(targetTranslate, 200);
+        const centerMathEditor = window.MathEditors.find(m => m.id === id);
+        if (!centerMathEditor) return;
+        const blocks = Object.values(centerMathEditor.dom.blocks);
+        const lastBlock = blocks[blocks.length - 1];
+        if (!lastBlock) lastBlock;
+        lastBlock.focus();
+    }
+
+    ////////////////////////////////////////////////////////////
+    // Event
+    ////////////////////////////////////////////////////////////
 
     preventDefaults(e) {
         e.preventDefault();
@@ -114,63 +179,6 @@ class TexField {
         this.windowSize = { x: window.innerWidth, y: window.innerHeight };
     }
 
-    checkTranslate() {
-        const rect = this.dom.noteContainer.getBoundingClientRect();
-        if(this.translate.x!=rect.x) this.translate.x=rect.x;
-        if(this.translate.y!=rect.y) this.translate.y=rect.y;
-    }
-
-    containerDropEvent(e) {
-        this.preventDefaults(e);
-
-        const files = e.dataTransfer.files;
-        if (files.length > 0) {
-            const file = files[0]; // reading first file
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                const fileContent = e.target.result;
-                try {
-                    const state = JSON.parse(fileContent);
-                    this.loadState(state);
-                } catch (e) {
-                    console.error(e);
-                }
-            };
-            reader.readAsText(file);
-        }
-    }
-
-    loadState(state) {
-        Object.values(this.dom.notes).forEach(note => { note.remove(); });
-        window.MathEditors = [];
-        this.dom.notes = {};
-        this.isDarkMode = state.isDarkMode;
-        this.createTime = state.createTime;
-        this.background = state.background;
-        this.isUserToggleDarkLightMode = state.isUserToggleDarkLightMode;
-        this.smoothMoveTo(state.translate); // this.translate = state.translate;
-        const matheditors = {};
-        state.matheditors.forEach(matheditor => {
-            matheditors[matheditor.id] = matheditor;
-            this.addNote(
-                matheditor.center.x,
-                matheditor.center.y,
-                matheditor.id,
-                matheditor.createTime,
-                matheditor.matheditor,
-                matheditor.order
-            );
-        });
-        state.linkpaths.forEach(linkpath => {
-            const startId = linkpath[0],
-                endId = linkpath[1];
-            if (!startId || !endId) return;
-            const start = matheditors[startId];
-            const end = matheditors[endId];
-            this.createBezierCurve(start.center, end.center);
-        });
-    }
-
     containerWheelEvents(e) {
         if (e.ctrlKey) return;
         // e.preventDefault();
@@ -178,52 +186,6 @@ class TexField {
         this.translate.y -= e.deltaY;
         this.moveToTranslation();
     }
-
-    moveToTranslation() {
-        const rect = this.dom.container.getBoundingClientRect();
-        const center = { x: rect.width * 0.5, y: rect.height * 0.5 };
-        requestAnimationFrame(function() {
-            this.dom.noteContainer.style.transform = `translate(${this.translate.x}px, ${this.translate.y}px)`;
-            this.dom.canvas.style.backgroundPosition = `${center.x + this.translate.x}px ${center.y + this.translate.y}px`;
-        }.bind(this));
-    }
-
-    smoothMoveTo(targetTranslate, duration = 500) {
-        return new Promise((resolve) => {
-            const startTranslate = { x: this.translate.x, y: this.translate.y };
-            const startTime = performance.now();
-
-            const easeInOut = (t) => {
-                return t < 0.5 ?
-                    4 * t * t * t :
-                    1 - Math.pow(-2 * t + 2, 3) / 2;
-            };
-
-            const animate = (currentTime) => {
-                const elapsedTime = currentTime - startTime;
-                const progress = Math.min(elapsedTime / duration, 1);
-                const easedProgress = easeInOut(progress);
-
-                this.translate.x = startTranslate.x + (targetTranslate.x - startTranslate.x) * easedProgress;
-                this.translate.y = startTranslate.y + (targetTranslate.y - startTranslate.y) * easedProgress;
-
-                const rect = this.dom.container.getBoundingClientRect();
-                const center = { x: rect.width * 0.5, y: rect.height * 0.5 };
-
-                this.dom.noteContainer.style.transform = `translate(${this.translate.x}px, ${this.translate.y}px)`;
-                this.dom.canvas.style.backgroundPosition = `${center.x + this.translate.x}px ${center.y + this.translate.y}px`;
-
-                if (progress < 1) {
-                    requestAnimationFrame(animate);
-                } else {
-                    resolve();
-                }
-            };
-
-            requestAnimationFrame(animate);
-        })
-    }
-
 
     containerDoubleClickEvent(e) {
         e.preventDefault();
@@ -395,6 +357,86 @@ class TexField {
         this.dom.container.classList.remove("drawingPath");
     }
 
+    ////////////////////////////////////////////////////////////
+    // Translate
+    ////////////////////////////////////////////////////////////
+
+    checkTranslate() {
+        const rect = this.dom.noteContainer.getBoundingClientRect();
+        if(this.translate.x!=rect.x) this.translate.x=rect.x;
+        if(this.translate.y!=rect.y) this.translate.y=rect.y;
+    }
+
+    moveToTranslation() {
+        const rect = this.dom.container.getBoundingClientRect();
+        const center = { x: rect.width * 0.5, y: rect.height * 0.5 };
+        requestAnimationFrame(function() {
+            this.dom.noteContainer.style.transform = `translate(${this.translate.x}px, ${this.translate.y}px)`;
+            this.dom.canvas.style.backgroundPosition = `${center.x + this.translate.x}px ${center.y + this.translate.y}px`;
+        }.bind(this));
+    }
+
+    smoothMoveTo(targetTranslate, duration = 500) {
+        return new Promise((resolve) => {
+            const startTranslate = { x: this.translate.x, y: this.translate.y };
+            const startTime = performance.now();
+
+            const easeInOut = (t) => {
+                return t < 0.5 ?
+                    4 * t * t * t :
+                    1 - Math.pow(-2 * t + 2, 3) / 2;
+            };
+
+            const animate = (currentTime) => {
+                const elapsedTime = currentTime - startTime;
+                const progress = Math.min(elapsedTime / duration, 1);
+                const easedProgress = easeInOut(progress);
+
+                this.translate.x = startTranslate.x + (targetTranslate.x - startTranslate.x) * easedProgress;
+                this.translate.y = startTranslate.y + (targetTranslate.y - startTranslate.y) * easedProgress;
+
+                const rect = this.dom.container.getBoundingClientRect();
+                const center = { x: rect.width * 0.5, y: rect.height * 0.5 };
+
+                this.dom.noteContainer.style.transform = `translate(${this.translate.x}px, ${this.translate.y}px)`;
+                this.dom.canvas.style.backgroundPosition = `${center.x + this.translate.x}px ${center.y + this.translate.y}px`;
+
+                if (progress < 1) {
+                    requestAnimationFrame(animate);
+                } else {
+                    resolve();
+                }
+            };
+
+            requestAnimationFrame(animate);
+        })
+    }
+
+    ////////////////////////////////////////////////////////////
+    // Background and Screen
+    ////////////////////////////////////////////////////////////
+
+    changeBackground() {
+        const canvas = this.dom.canvas;
+        const config = this.background;
+        if (config.type === 'none'){
+            canvas.style.backgroundColor = config.color;
+            canvas.style.backgroundImage = 'none';
+            return;
+        }
+        const rect = this.dom.container.getBoundingClientRect();
+        const center = { x: rect.width * 0.5, y: rect.height * 0.5 };
+
+        canvas.style.background = config.color;
+        if (config.type === 'dot') {
+            canvas.style.backgroundImage = `radial-gradient(${config.lineStyle} ${config.lineWidth}px, transparent 0)`;
+        } else if (config.type === 'grid') {
+            canvas.style.backgroundImage = `linear-gradient(to right, ${config.lineStyle} ${config.lineWidth}px, transparent ${config.lineWidth}px), linear-gradient(to bottom, ${config.lineStyle} ${config.lineWidth}px, transparent ${config.lineWidth}px)`;
+        }
+        canvas.style.backgroundPosition = `${center.x + this.translate.x}px ${center.y + this.translate.y}px`;
+        canvas.style.backgroundSize = `${config.size}px ${config.size}px`;
+    }
+
     toggleFullScreen() {
         if (!document.fullscreenElement) {
             document.documentElement.requestFullscreen();
@@ -403,30 +445,26 @@ class TexField {
         }
     }
 
-    centerNote(num) {
-        if (!window.MathEditors || num > window.MathEditors.length) return;
-        // num: 1,2,3,4,5,6,7,8,9
-        const lastMatheditor = window.MathEditors[num - 1];
-        if (!lastMatheditor) return;
-        const id = lastMatheditor.id;
-        if (!id) return;
-        const centerDom = document.querySelector(`#${id}`);
-        if (!centerDom) return;
-        const noteRect = centerDom.getBoundingClientRect();
-        const targetCenterX = noteRect.left + (noteRect.width * 0.5);
-        const targetCenterY = noteRect.top + (noteRect.height * 0.5);
-        const targetTranslate = {
-            x: this.translate.x + window.innerWidth * 0.5 - targetCenterX,
-            y: this.translate.y + window.innerHeight * 0.5 - targetCenterY
-        };
-        this.smoothMoveTo(targetTranslate, 200);
-        const centerMathEditor = window.MathEditors.find(m => m.id === id);
-        if (!centerMathEditor) return;
-        const blocks = Object.values(centerMathEditor.dom.blocks);
-        const lastBlock = blocks[blocks.length - 1];
-        if (!lastBlock) lastBlock;
-        lastBlock.focus();
+    changeDarkLightModeEvent(e) {
+        if (!this.isUserToggleDarkLightMode || e) this.isDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        if (this.isDarkMode) { // dark mode
+            this.dom.favicon.href = "./img/TexField.dark.png";
+            this.background.lineStyle = '#888';
+            this.background.color = '#333';
+            this.changeBackground();
+            document.body.classList.add("dark");
+        } else { // light mode
+            this.dom.favicon.href = "./img/TexField.light.png";
+            this.background.lineStyle = this._background.lineStyle;
+            this.background.color = this._background.color;
+            this.changeBackground();
+            document.body.classList.remove("dark");
+        }
     }
+
+    ////////////////////////////////////////////////////////////
+    // State
+    ////////////////////////////////////////////////////////////
 
     getState() {
         if (!window.MathEditors) return;
@@ -478,73 +516,60 @@ class TexField {
         downloadAnchorNode.remove()
     }
 
-    createBezierCurve(start, end, startWidth = null, endWidth = null) {
-        const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
-        path.classList.add("path");
-        path.setAttribute('fill', 'none');
-        this.setBezierCurvePath(path, start, end, startWidth, endWidth);
-        this.dom.pathContainer.appendChild(path);
-        return path;
-    }
+    containerDropEvent(e) {
+        this.preventDefaults(e);
 
-    setBezierCurvePath(path, start, end, startWidth = null, endWidth = null) {
-        const x1 = start.x,
-            y1 = start.y,
-            x2 = end.x,
-            y2 = end.y;
-        const w1 = (x2 - x1) * 0.7;
-        const w2 = (x2 - x1) * 0.7;
-        const cx1 = x1 + w1,
-            cy1 = y1,
-            cx2 = x2 - w2,
-            cy2 = y2;
-        path.setAttribute('d', `M ${x1} ${y1} C ${cx1} ${cy1}, ${cx2} ${cy2}, ${x2} ${y2}`);
-    }
-
-    addNote(x, y, id = null, createTime = null, state = null, order = null) {
-        id = id || hash(`${x}-${y}-${Date.now()}`.padStart(50, '0')).slice(0, 10)
-        // ---
-        const note = createAndAppendElement(this.dom.noteContainer, 'div', {
-            class: 'note',
-            id: id,
-            draggable: false,
-            style: `display: block; absolute; top: ${y}px; left: ${x}px;`,
-            dataset: {
-                createTime: createTime || getTime()
-            }
-        });
-        const mathEditor = new MathEditor({
-            parent: note,
-            id: id,
-            states: state,
-            order: order
-        });
-        // ---
-        this.dom.notes[id] = note;
-    }
-
-    changeBackground() {
-        const canvas = this.dom.canvas;
-        const config = this.background;
-        if (config.type === 'none'){
-            canvas.style.backgroundColor = config.color;
-            canvas.style.backgroundImage = 'none';
-            return;
+        const files = e.dataTransfer.files;
+        if (files.length > 0) {
+            const file = files[0]; // reading first file
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const fileContent = e.target.result;
+                try {
+                    const state = JSON.parse(fileContent);
+                    this.loadState(state);
+                } catch (e) {
+                    console.error(e);
+                }
+            };
+            reader.readAsText(file);
         }
-        const rect = this.dom.container.getBoundingClientRect();
-        const center = { x: rect.width * 0.5, y: rect.height * 0.5 };
-
-        canvas.style.background = config.color;
-        if (config.type === 'dot') {
-            canvas.style.backgroundImage = `radial-gradient(${config.lineStyle} ${config.lineWidth}px, transparent 0)`;
-        } else if (config.type === 'grid') {
-            canvas.style.backgroundImage = `linear-gradient(to right, ${config.lineStyle} ${config.lineWidth}px, transparent ${config.lineWidth}px), linear-gradient(to bottom, ${config.lineStyle} ${config.lineWidth}px, transparent ${config.lineWidth}px)`;
-        }
-        canvas.style.backgroundPosition = `${center.x + this.translate.x}px ${center.y + this.translate.y}px`;
-        canvas.style.backgroundSize = `${config.size}px ${config.size}px`;
     }
 
-    // --- below is to print PDF
+    loadState(state) {
+        Object.values(this.dom.notes).forEach(note => { note.remove(); });
+        window.MathEditors = [];
+        this.dom.notes = {};
+        this.isDarkMode = state.isDarkMode;
+        this.createTime = state.createTime;
+        this.background = state.background;
+        this.isUserToggleDarkLightMode = state.isUserToggleDarkLightMode;
+        this.smoothMoveTo(state.translate); // this.translate = state.translate;
+        const matheditors = {};
+        state.matheditors.forEach(matheditor => {
+            matheditors[matheditor.id] = matheditor;
+            this.addNote(
+                matheditor.center.x,
+                matheditor.center.y,
+                matheditor.id,
+                matheditor.createTime,
+                matheditor.matheditor,
+                matheditor.order
+            );
+        });
+        state.linkpaths.forEach(linkpath => {
+            const startId = linkpath[0],
+                endId = linkpath[1];
+            if (!startId || !endId) return;
+            const start = matheditors[startId];
+            const end = matheditors[endId];
+            this.createBezierCurve(start.center, end.center);
+        });
+    }
+
+    ////////////////////////////////////////////////////////////
+    // print PDF
+    ////////////////////////////////////////////////////////////
 
     printInfiniteCanvas() {
         this.checkTranslate();
