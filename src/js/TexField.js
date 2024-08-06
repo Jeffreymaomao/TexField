@@ -203,17 +203,18 @@ class TexField {
         const parentNoteDom = findParentWithSelector(e.target, '.note');
         
         if (!parentNoteDom) {
+            // ---
             // if not inside note => dragging canvas
+            // ---
             this.isDraggingCanvas = true;
             this.draggingCanvasStart.x = e.clientX;
             this.draggingCanvasStart.y = e.clientY;
             this.dom.container.classList.add("dragging");
             if(!targetIsPath) this.focusNote = null;
-            return;
-        }
-
-        if (e.shiftKey && !this.drawingPath && !this.dom.drawingPath) {
-            // start to draw path
+        } else if ((e.ctrlKey||e.metaKey) && e.shiftKey && !this.drawingPath && !this.dom.drawingPath) {
+            // ---
+            // (crtl/meta) + shift => start to draw path
+            // ---
             this.drawingPath = true;
             const noteRect = parentNoteDom.getBoundingClientRect();
             const centerX = noteRect.left + (noteRect.width * 0.5) - this.translate.x;
@@ -222,17 +223,22 @@ class TexField {
             const pathStart = { x: centerX, y: centerY, id: parentNoteDom.id };
             this.dom.drawingPath = this.createBezierCurve(pathStart, pathStart);
             this.pathStart = pathStart;
-        // } else if(targetIsNote) {
-        } else if(parentNoteDom) {
-            // focus note
+        } else if((e.ctrlKey||e.metaKey) && parentNoteDom) {
+            // ---
+            // target inside note => focus note
+            // ---
             this.focusNote = parentNoteDom;
             this.focusNote.classList.add("focus");
-            // dradding note
+            // ---
+            // start to dradding note
+            // ---
             this.currentDraggingNote = parentNoteDom;
             this.startX = e.clientX - parentNoteDom.offsetLeft;
             this.startY = e.clientY - parentNoteDom.offsetTop;
         }  else if(targetIsPath) {
-            // focus path
+            // ---
+            // target is path => focus path
+            // ---
             this.focusNote = e.target;
             this.focusNote.classList.add("focus");
         }
@@ -240,6 +246,9 @@ class TexField {
 
     containerMouseMoveEvent(e) {
         if (!e.shiftKey && this.currentDraggingNote) {
+            // ---
+            // draging note
+            // ---
             const containerRect = this.dom.noteContainer.getBoundingClientRect();
             const newX = e.clientX - containerRect.left - this.startX + this.translate.x;
             const newY = e.clientY - containerRect.top - this.startY + this.translate.y;
