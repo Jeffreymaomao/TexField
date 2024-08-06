@@ -239,7 +239,6 @@ class TexField {
         const targetIsNote = targetClassList.contains('note')
         const targetIsPath = targetClassList.contains('path');
         const parentNoteDom = findParentWithSelector(e.target, '.note');
-
         
         if (!parentNoteDom) {
             // if not inside note => dragging canvas
@@ -250,7 +249,6 @@ class TexField {
             if(!targetIsPath) this.focusNote = null;
             return;
         }
-        
 
         if (e.shiftKey && !this.drawingPath && !this.dom.drawingPath) {
             // start to draw path

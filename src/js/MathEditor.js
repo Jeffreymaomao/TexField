@@ -220,7 +220,7 @@ class MathEditor {
             // ------------------------------------------------------------------------
         } else if (e.key==='ArrowUp' || e.key==='ArrowDown') {
             this.moveFocusUpDown(e, mathBlock);
-        } else if ((e.ctrlKey || e.metaKey) && e.key==='Enter') {
+        } else if ((e.ctrlKey || e.metaKey) && e.key==='Enter' && !e.shiftKey && !e.altKey) {
             this.createEquationDom();
         } else if ((e.ctrlKey || e.metaKey) && e.key==='Backspace' && !e.shiftKey && !e.altKey){
             this.deleteFocus();
