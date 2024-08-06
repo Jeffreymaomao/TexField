@@ -9,13 +9,35 @@
 
 ## Usage / Shortcuts
 
-| MathEditor Action            |      Shortcuts (mac OS)      |             Shortcuts (Windows)              |
-| :--------------------------- | :--------------------------: | :------------------------------------------: |
-| Toggle Block Editing mode    | <kbd>⌘</kbd> + <kbd>/</kbd>  |        <kbd>Ctrl</kbd> + <kbd>/</kbd>        |
-| Create New Block             | <kbd>⌘</kbd> + <kbd>⏎</kbd>  |      <kbd>Ctrl</kbd> + <kbd>Enter</kbd>      |
-| Delete Foucs Block           | <kbd>⌘</kbd> + <kbd>⌫</kbd>  |    <kbd>Ctrl</kbd> + <kbd>Backspace</kbd>    |
-| Change Focus Block Up / Down | <kbd>↑</kbd> or <kbd>↓</kbd> | <kbd>Up Arrow</kbd> or <kbd>Down Arrow</kbd> |
-| Focus Block                  |            Click             |                    Click                     |
+| MathEditor Action            |       Method (mac OS)        |               Method (Windows)               |
+| ---------------------------- | :--------------------------- | :------------------------------------------- |
+| Toggle Block Editing mode    | <kbd>command</kbd> + <kbd>/</kbd> |        <kbd>Ctrl</kbd> + <kbd>/</kbd>        |
+| Create New Block             | <kbd>command</kbd> + <kbd>return</kbd> |      <kbd>Ctrl</kbd> + <kbd>Enter</kbd>      |
+| Delete Foucs Block           | <kbd>command</kbd> + <kbd>delete</kbd> |    <kbd>Ctrl</kbd> + <kbd>Backspace</kbd>    |
+| Move focus Up / Down | <kbd>↑</kbd> or <kbd>↓</kbd> | <kbd>Up Arrow</kbd> or <kbd>Down Arrow</kbd> |
+| Focus Block                  |            Click Block            |                    Click Block                    |
+
+| TexField Action     | Method (mac OS)                                         | Method (Windows)                                  |
+| ------------------- | :------------------------------------------------------ | :------------------------------------------------ |
+| Add New Note        | Double Click                                            | Double Click                                      |
+| Add Path Link       | <kbd>command</kbd> + <kbd>shift</kbd> + Drag Note       | <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + Drag Note    |
+| Focus Note          | <kbd>command</kbd> + Click Note                         | <kbd>Ctrl</kbd> + Click Note                      |
+| Focus Path          | Click Path                                              | Click Path                                        |
+| Move Note           | <kbd>command</kbd> + Drag Note                          | <kbd>Ctrl</kbd> + Drag Note                       |
+| Center Note         | <kbd>command</kbd> + <kbd>option</kbd> + <kbd>1~9</kbd> | <kbd>Ctrl</kbd> + <kbd>Alt</kbd> + <kbd>1~9</kbd> |
+| Delete Focused Note | Select Note $\to$ <kbd>delete</kbd>                     | Select Note $\to$ <kbd>Backspace</kbd>            |
+| Delete Focused Note | Select Path $\to$ <kbd>delete</kbd>                     | Select Path $\to$ <kbd>Backspace</kbd>            |
+
+| Global Action            | Method (mac OS)                   | Method (Windows)               |
+| ------------------------ | --------------------------------- | ------------------------------ |
+| Toggle Dark / Light mode | <kbd>command</kbd> + <kbd>b</kbd> | <kbd>Ctrl</kbd> + <kbd>b</kbd> |
+| Export JSON              | <kbd>command</kbd> + <kbd>e</kbd> | <kbd>Ctrl</kbd> + <kbd>e</kbd> |
+| Print PDF                | <kbd>command</kbd> + <kbd>p</kbd> | <kbd>Ctrl</kbd> + <kbd>p</kbd> |
+| Full Screen              | <kbd>command</kbd> + <kbd>f</kbd> | <kbd>Ctrl</kbd> + <kbd>f</kbd> |
+
+## User Interface
+
+### Screen Shot
 
 ## Features
 
