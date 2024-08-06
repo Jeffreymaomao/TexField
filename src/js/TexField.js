@@ -41,17 +41,17 @@ class TexField {
 
     initializeDom() {
         this.dom.container = createAndAppendElement(this.dom.parent, 'div', {
-            class: 'freemath-container',
+            class: 'texfield-container',
             style: 'display: block; position: fixed; top: 0; left: 0; overflow: hidden; width: 100vw; height: 100vh;'
         });
 
         this.dom.canvas = createAndAppendElement(this.dom.container, 'div', {
-            class: 'freemath-canvas',
+            class: 'texfield-canvas',
             style: 'display: block; position: fixed;  overflow: hidden; width: 100%; height: 100%;'
         });
 
         this.dom.noteContainer = createAndAppendElement(this.dom.container, 'div', {
-            class: 'freemath-note-container',
+            class: 'texfield-note-container',
             style: 'display: block; position: absolute; top: 0; left: 0; width: 100%; height: 100%;'
         });
 
@@ -201,8 +201,7 @@ class TexField {
         const targetIsNote = targetClassList.contains('note')
         const targetIsPath = targetClassList.contains('path');
         const parentNoteDom = findParentWithSelector(e.target, '.note');
-        
-        if (!parentNoteDom) {
+        if (!parentNoteDom && !targetIsPath) {
             // ---
             // if not inside note => dragging canvas
             // ---
@@ -210,7 +209,14 @@ class TexField {
             this.draggingCanvasStart.x = e.clientX;
             this.draggingCanvasStart.y = e.clientY;
             this.dom.container.classList.add("dragging");
-            if(!targetIsPath) this.focusNote = null;
+            this.focusNote = null;
+        } else if (targetIsPath) {
+            // ---
+            // if focus path => focus path
+            // ---
+            this.focusNote = e.target;
+            this.focusNote.classList.add("focus");
+            
         } else if ((e.ctrlKey||e.metaKey) && e.shiftKey && !this.drawingPath && !this.dom.drawingPath) {
             // ---
             // (crtl/meta) + shift => start to draw path
@@ -316,8 +322,14 @@ class TexField {
     }
 
     containerKeyDownEvent(e) {
-        if (e.shiftKey && !document.querySelector(".mq-focused")) {
-            this.dom.container.classList.add("drawingPath");
+        if ((e.metaKey || e.ctrlKey)) {
+            this.dom.container.classList.remove("drawingPath");
+            this.dom.container.classList.remove("movingNote");
+            if(e.shiftKey){
+                this.dom.container.classList.add("drawingPath");
+            } else {
+                this.dom.container.classList.add("movingNote");
+            }
         }
         // ---
         if (this.focusNote && e.key === 'Backspace') {
@@ -335,7 +347,7 @@ class TexField {
         } else if (e.metaKey || e.ctrlKey) {
             if (e.key === 'e') { // export 
                 e.preventDefault();
-                const filename = `freemath-${this.createTime}.json`;
+                const filename = `texfield-${this.createTime}.json`;
                 this.exportState(filename);
             } else if (e.key === 's') { // save
                 e.preventDefault();
@@ -351,7 +363,6 @@ class TexField {
                 window.localStorage.setItem("isDarkMode", this.isDarkMode);
 
             } else if (e.altKey) { // center matheditor
-                // if(document.querySelector('.mq-focused, .focus')) return;
                 if (['Digit1', 'Digit2', 'Digit3', 'Digit4', 'Digit5', 'Digit6', 'Digit7', 'Digit8', 'Digit9'].includes(e.code)) {
                     this.centerNote(parseInt(e.code.replace('Digit', '')));
                 }
@@ -364,6 +375,7 @@ class TexField {
 
     containerKeyUpEvent() {
         this.dom.container.classList.remove("drawingPath");
+        this.dom.container.classList.remove("movingNote");
     }
 
     ////////////////////////////////////////////////////////////

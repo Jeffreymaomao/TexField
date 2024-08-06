@@ -8,25 +8,66 @@ body {
     overflow: hidden;
 }
 
-/* --- */
-.freemath-container {
-    cursor: grab;
+/**********************************
+ * texfield-container *
+ **********************************/
+/* default */
+.texfield-container {
+    cursor: crosshair;
 }
 
-.freemath-container.dragging {
+.texfield-container .note{
+    cursor: pointer;
+}
+
+.texfield-container .path{
+    cursor: pointer;
+}
+
+
+/* dragging canvas */
+.texfield-container.dragging {
     cursor: grabbing;
 }
 
-.freemath-canvas {
+/* moving note */
+.texfield-container.movingNote{
+    cursor: default;
+}
+
+.texfield-container.movingNote .note{
+    cursor: move;
+}
+
+/* drawing path */
+.texfield-container.drawingPath {
+    cursor: crosshair;
+}
+
+.texfield-container.drawingPath .note {
+    cursor: crosshair;
+}
+
+
+
+/**********************************
+ * other container set by JS *
+ **********************************/
+
+.texfield-canvas {
 /*    border: 1px solid red;*/
 }
 
-.freemath-path-container {
+.texfield-path-container {
 }
 
-.freemath-note-container {
-/*    border: 1px solid blue;*/
+.texfield-note-container {
+
 }
+
+/**********************************
+ * NOTE *
+ **********************************/
 
 .note {
     position: absolute;
@@ -37,11 +78,11 @@ body {
     border: 1px solid #888;
     background-color: white;
     border-radius: 6px;
-    cursor: grab;
     transform: translate(-50%, -50%);
 }
 
-.freemath-container.drawingPath .note:after {
+.texfield-container.movingNote .note:after,
+.texfield-container.drawingPath .note:after {
     content: '';
     position: absolute;
     left: 0;
@@ -52,7 +93,7 @@ body {
 }
 
 .note.focus {
-    box-shadow: 0 0 6px #fdfa72, 0 0 6px #fdfa72;
+    outline: 1px solid #d94b58;
 }
 
 /* --- */
@@ -72,11 +113,9 @@ body {
 .path {
     stroke: #ccc;
     stroke-width: 2;
-    cursor: pointer;
 }
 
 .path.focus {
-    stroke: #e3e166;
     stroke-width: 4px;
 }
 
@@ -91,19 +130,9 @@ body.dark .note {
     color: #eee;
 }
 
-body.dark .mq-editable-field.mq-focused,
-body.dark .mq-math-mode .mq-editable-field.mq-focused {
-    -webkit-box-shadow: #0278c7 0 0 1px 1px, inset #002b57 0 0 1px 0;
-    -moz-box-shadow: #0278c7 0 0 1px 1px, inset #002b57 0 0 1px 0;
-    box-shadow: #0278c7 0 0 1px 1px, inset #002b57 0 0 1px 0;
-    border-color: #0063bd;
-    border-radius: 1px;
-}
-
 body.dark .note.focus {
-    box-shadow: 0 0 6px #e3e166, 0 0 6px #e3e166;
+    outline: 1px solid #e3e166;
 }
-
 
 body.dark .path {
     stroke: #999;
