@@ -14,6 +14,7 @@ class MathEditor {
         this.id_prefix = config?.id_prefix || this.id;
         this._id_num = 1;
         this.focusId = null;
+        this.focusing = false;
         this.states = {};
         this.isComposing = false;
         this.katex = window.katex;
@@ -105,6 +106,7 @@ class MathEditor {
             mathBlock.classList.add('focus');
             mathRenderLatexArea.classList.remove('isEmpty');
             this.focusId = blockId;
+            this.focusing = true;
 
             // (remark-1) If editing => After block focus, focus move to textarea
             if(mathBlock.classList.contains('editing')) mathTextArea.focus();
@@ -113,6 +115,7 @@ class MathEditor {
         }.bind(this), false);
 
         mathBlock.addEventListener('blur',function(e) {
+            this.focusing = false;
             mathBlock.classList.remove('focus');
         }.bind(this), false);
 
@@ -133,10 +136,12 @@ class MathEditor {
         }.bind(this), false);
 
         mathTextArea.addEventListener('focus', function(e) {
+            this.focusing = true;
             mathBlock.classList.add('focus');
         }.bind(this), false);
 
         mathTextArea.addEventListener('blur', function(e) {
+            this.focusing = false;
             mathBlock.classList.remove('focus');
             // using a setTimeout function to wait (if) textarea focus
             setTimeout(()=>{

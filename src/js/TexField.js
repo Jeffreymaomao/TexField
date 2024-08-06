@@ -25,7 +25,7 @@ class TexField {
         this.isDraggingCanvas = false;
         this.draggingCanvasStart = { x: 0, y: 0 };
         this.currentDraggingNote = null;
-        this.focusNote = null;
+        this.focusNote = null; // focus note
         this.drawingPath = false;
         this.pathStart = { x: 0, y: 0, id: null };
         this.initializeDom();
@@ -158,7 +158,8 @@ class TexField {
                 matheditor.id,
                 matheditor.createTime,
                 matheditor.matheditor,
-                matheditor.order);
+                matheditor.order
+            );
         });
         state.linkpaths.forEach(linkpath => {
             const startId = linkpath[0],
@@ -246,12 +247,7 @@ class TexField {
             this.draggingCanvasStart.x = e.clientX;
             this.draggingCanvasStart.y = e.clientY;
             this.dom.container.classList.add("dragging");
-            if(!targetIsPath){
-                this.focusNote = null; 
-            }
-            // if(!targetIsNote && !targetIsPath){
-            //     this.focusNote = null; 
-            // }
+            if(!targetIsPath) this.focusNote = null;
             return;
         }
         
