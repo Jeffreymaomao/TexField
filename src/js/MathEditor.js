@@ -172,6 +172,7 @@ class MathEditor {
                 displayMode: true,
                 output: this.katexOutput,
                 throwOnError: true,
+                trust: true
             });
         } catch(err){
             if(!err instanceof this.katex.ParseError) return;
