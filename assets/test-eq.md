@@ -11,11 +11,28 @@
     
     
     
+- Continue Equation **Fluid Dynamics (FD)**
+    $$
+    \frac{\partial \rho}{\partial t} + \nabla \cdot\left(\rho \mathbf{u}\right) = 0
+    $$
+    
+    
+- Euler's equation **Fluid Dynamics (FD)**
+    $$
+    \rho \frac{d\textbf{u}}{dt}= -\nabla\rho + \mathbf{g}
+    $$
+
 - Navier-Stoke's equation **Fluid Dynamics (FD)**
+    $$
+    \rho \frac{d\textbf{u}}{dt}= -\nabla\rho +\nabla\cdot\boldsymbol{\tau} + \rho\,\mathbf{f}
+    $$
+
     $$
     \rho \left(\frac{\partial \mathbf{u}}{\partial t} + \left(\mathbf{u}\cdot\nabla\right)\,\mathbf{u}\right) = -\nabla\rho +\nabla\cdot\boldsymbol{\tau} + \rho\,\mathbf{f}
     $$
-
+    
+    
+    
 - Schrödinger equation in **Quantum Mechanics (QM)** 
     $$
     i\hbar \frac{\partial}{\partial t}\ket{\Psi} = \hat{H}\ket{\Psi}
@@ -23,7 +40,7 @@
     
 - Lagrangian in **Quantum Electrodynamics (QED)**
     $$
-    \mathcal{L} = \bar{\psi}\left(i\gamma^{\mu}D_{\mu}-m\right)\psi - \frac{1}{4}F_{\mu\nu}F^{\mu\nu}
+    \mathcal{L}_{\mathrm{QED}} = \bar{\psi}\left(i\gamma^{\mu}D_{\mu}-m\right)\psi - \frac{1}{4}F_{\mu\nu}F^{\mu\nu}
     $$
 
 - Lagrangian in **Quantum Chromodynamics (QCD)**
