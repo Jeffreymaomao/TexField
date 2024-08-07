@@ -31,18 +31,19 @@ body {
 }
 
 /* moving note */
-.texfield-container.movingNote{
-    cursor: default;
-}
-
 .texfield-container.movingNote .note{
     cursor: grab;
 }
 
 /* drawing path */
-.texfield-container.drawingPath {
+.texfield-container.pointer {
     cursor: crosshair;
 }
+
+.texfield-container.drawingPath.dragging {
+    cursor: grabbing;
+}
+
 
 .texfield-container.drawingPath .note {
     cursor: crosshair;
