@@ -92,16 +92,17 @@ class TexField {
     // Note & Path
     ////////////////////////////////////////////////////////////
 
-    createBezierCurve(start, end, startWidth = null, endWidth = null) {
+    createBezierCurve(start, end, pathId) {
         const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
         path.classList.add("path");
         path.setAttribute('fill', 'none');
-        this.setBezierCurvePath(path, start, end, startWidth, endWidth);
+        path.id = pathId;
+        this.setBezierCurvePath(path, start, end);
         this.dom.pathContainer.appendChild(path);
         return path;
     }
 
-    setBezierCurvePath(path, start, end, startWidth = null, endWidth = null) {
+    setBezierCurvePath(path, start, end) {
         const x1 = start.x,
             y1 = start.y,
             x2 = end.x,
@@ -315,7 +316,7 @@ class TexField {
                 this.dom.paths[pathId] = {
                     start: this.pathStart,
                     end: pathEnd,
-                    dom: this.createBezierCurve(this.pathStart, pathEnd)
+                    dom: this.createBezierCurve(this.pathStart, pathEnd, pathId)
                 }
             }
         }
@@ -344,6 +345,7 @@ class TexField {
             Object.keys(this.dom.paths).forEach(pathId => {
                 if (!pathId.includes(deleteId)) return;
                 this.dom.paths[pathId].dom.remove();
+                delete this.dom.paths[pathId];
             });
             window.MathEditors = window.MathEditors.filter(matheditor => matheditor.id !== deleteId);
         } else if (e.metaKey || e.ctrlKey) {
@@ -586,7 +588,7 @@ class TexField {
             if (!startId || !endId) return;
             const start = matheditors[startId];
             const end = matheditors[endId];
-            this.createBezierCurve(start.center, end.center);
+            this.createBezierCurve(start.center, end.center, startId);
         });
     }
 
