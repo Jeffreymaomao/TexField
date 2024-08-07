@@ -51,43 +51,64 @@
 
 ## User Interface
 
+#### Introduction about "Note", "Block" and "Canvas"
+
 <p align='center'>
     <picture>
-        <source media="(prefers-color-scheme: dark)" srcset="./assets/UI-block-dark.png">
-        <img alt="TexField Focusing" src="./assets/UI-block-light.png" width='100%'>
+        <source media="(prefers-color-scheme: dark)" srcset="./assets/UI-block-intro-dark.png">
+        <img alt="TexField Focusing" src="./assets/UI-block-intro-light.png" width='100%'>
+        <figcaption style='padding:0 10%'>The images above provide a simple introduction to the interface. The surrounding area is the Canvas, the center contains "Note", and within the notes ate editable regions for mathematical formulas called "Block". You can click on a block to focus on it.</figcaption>
 	</picture>
 </p>
+
+
+
+#### Toggling between "Normal Mode" and "Edit Mode"
 
 <p align='center'>
     <picture>
         <source media="(prefers-color-scheme: dark)" srcset="./assets/UI-block-edit-dark.png">
         <img alt="TexField Editing" src="./assets/UI-block-edit-light.png" width='100%'>
+		<figcaption style='padding:0 10%'>The image above shows how to edit a "Block". After focusing on a "Block", you can press <kbd>command</kbd> + <kbd>/</kbd> (For Windows user, press <kbd>Ctrl</kbd> + <kbd>/</kbd>) to toggle between "Normal Mode" and "Edit Mode".</figcaption>
 	</picture>
 </p>
 
-<div style="display: flex; justify-content: space-between;">
-  <div style="flex: 1; text-align: left;">
-    <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="./assets/UI-block-add-delete-dark.gif">
-      <img alt="TexField Add / Delete Block" src="./assets/UI-block-add-delete-light.gif" width="100%">
+
+
+#### Adding / Deleting "Blocks" & Draging "Canvas" and "Note"
+
+<p align='center'>
+    <picture align='left'>
+        <source media="(prefers-color-scheme: dark)" srcset="./assets/UI-block-add-delete-dark.gif">
+        <img alt="TexField Add / Delete Block" src="./assets/UI-block-add-delete-light.gif" width="49%">
     </picture>
-  </div>
-  <div style="flex: 1; text-align: right;">
-    <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="./assets/UI-note-canvas-drag-dark.gif">
-      <img alt="TexField Logo" src="./assets/UI-note-canvas-drag-light.gif" width="100%">
+    <picture align='right'>
+        <source media="(prefers-color-scheme: dark)" srcset="./assets/UI-note-canvas-drag-dark.gif">
+        <img alt="TexField drag note & canvas" src="./assets/UI-note-canvas-drag-light.gif" width="49%">
     </picture>
-  </div>
-</div>
+    <figcaption style='padding:0 10%'>The left video shows how to add and delete "Blocks". After focusing on a "Block", press <kbd>command</kbd> + <kbd>enter</kbd> (For Windows users, press <kbd>Ctrl</kbd> + <kbd>Enter</kbd>) to add a new "Block" below the focused "Block". Press <kbd>command</kbd> + <kbd>delete</kbd> (For Windows users, press <kbd>Ctrl</kbd> + <kbd>Backspace</kbd>) to delete the focused "Block".<br><br>The right video shows how to move the entire "Canvas" and a single "Note". Dragging the "Canvas" directly will move the entire canvas. Press and hold <kbd>command</kbd> (For Windows users, hold <kbd>Ctrl</kbd>), then click on a "Note" to focus on it and drag it to move the "Note" individually.</figcaption>
+	</picture>
+</p>
+
+#### Linking two "Notes" by a "Path"
 
 <p align='center'>
     <picture>
         <source media="(prefers-color-scheme: dark)" srcset="./assets/UI-add-path-dark.gif">
         <img alt="TexField Editing" src="./assets/UI-add-path-light.gif" width='100%'>
+        <figcaption style='padding:0 10%'>The video above shows how to link two "Notes". Press and hold <kbd>command</kbd> + <kbd>shift</kbd> and click-drag one of the "Note" to create a "Path", which is Bezier curve (For Windows user, hold <kbd>Ctrl</kbd> + <kbd>Shift</kbd>). Then, while holding the keys, release the click on the other "Note" to connect them with a "Path".</figcaption>
 	</picture>
 </p>
 
+#### Focus / Delete "Note" and "Path"
 
+<p align='center'>
+    <picture>
+        <source media="(prefers-color-scheme: dark)" srcset="./assets/UI-note-path-delete-dark.gif">
+        <img alt="TexField Editing" src="./assets/UI-note-path-delete-light.gif" width='100%'>
+        <figcaption style='padding:0 10%'>The video above shows how to delete "Block" and "Path". First, use <kbd>command</kbd> + click (Windows users, <kbd>Ctrl</kbd> + click) to select a "Note", or directly click a "Path" to select it. Then press <kbd>Delete</kbd> (Windows users, <kbd>Backspace</kbd>) to delete the selected "Note" or "Path".</figcaption>
+	</picture>
+</p>
 
 ## Features
 
