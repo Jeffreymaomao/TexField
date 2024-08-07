@@ -120,6 +120,10 @@ The video above shows how to link two "Notes". Press and hold <kbd>command</kbd>
 
 The video above shows how to delete "Block" and "Path". First, use <kbd>command</kbd> + click (Windows users, <kbd>Ctrl</kbd> + click) to select a "Note", or directly click a "Path" to select it. Then press <kbd>Delete</kbd> (Windows users, <kbd>Backspace</kbd>) to delete the selected "Note" or "Path".
 
+> [!CAUTION]
+> Currently, operations on "Notes" or "Paths" do not have an undo feature.
+> Therefore, deleting or moving "Notes" and "Paths" cannot be undone.
+
 ## Features
 
 - **Infinite Canvas**: Interact with a canvas that expands indefinitely to manage and organize your LaTeX notes and diagrams.
