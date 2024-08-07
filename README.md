@@ -6,7 +6,7 @@
 <h1 align='center'>TexField</h1>
 </p>
 
-**TexField** is a web application designed for creating and managing LaTeX notes on an infinitely large canvas. By leveraging [KaTeX](https://katex.org/) for LaTeX rendering, TexField enables fast and efficient display of mathematical formulas directly in your browser.
+**TexField** is a web application designed for creating and managing LaTeX notes on an infinitely large canvas. By leveraging [KaTeX](https://katex.org/) for LaTeX rendering, TexField enables fast and efficient display of mathematical formulas directly in your browser.ㄏ 
 
 
 ## Getting Started
