@@ -32,6 +32,7 @@
 
 | TexField Action     | Method (mac OS)                                         | Method (Windows)                                  |
 | ------------------- | :------------------------------------------------------ | :------------------------------------------------ |
+| Move Canvas         | Scroll Wheel / Drag Canvas                              | Scroll Wheel / Drag Canvas                        |
 | Add New Note        | Double Click                                            | Double Click                                      |
 | Add Path Link       | <kbd>command</kbd> + <kbd>shift</kbd> + Drag Note       | <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + Drag Note    |
 | Focus Note          | <kbd>command</kbd> + Click Note                         | <kbd>Ctrl</kbd> + Click Note                      |
@@ -50,7 +51,43 @@
 
 ## User Interface
 
-### Screen Shot
+<p align='center'>
+    <picture>
+        <source media="(prefers-color-scheme: dark)" srcset="./assets/UI-block-dark.png">
+        <img alt="TexField Focusing" src="./assets/UI-block-light.png" width='100%'>
+	</picture>
+</p>
+
+<p align='center'>
+    <picture>
+        <source media="(prefers-color-scheme: dark)" srcset="./assets/UI-block-edit-dark.png">
+        <img alt="TexField Editing" src="./assets/UI-block-edit-light.png" width='100%'>
+	</picture>
+</p>
+
+<div style="display: flex; justify-content: space-between;">
+  <div style="flex: 1; text-align: left;">
+    <picture>
+      <source media="(prefers-color-scheme: dark)" srcset="./assets/UI-block-add-delete-dark.gif">
+      <img alt="TexField Add / Delete Block" src="./assets/UI-block-add-delete-light.gif" width="100%">
+    </picture>
+  </div>
+  <div style="flex: 1; text-align: right;">
+    <picture>
+      <source media="(prefers-color-scheme: dark)" srcset="./assets/UI-note-canvas-drag-dark.gif">
+      <img alt="TexField Logo" src="./assets/UI-note-canvas-drag-light.gif" width="100%">
+    </picture>
+  </div>
+</div>
+
+<p align='center'>
+    <picture>
+        <source media="(prefers-color-scheme: dark)" srcset="./assets/UI-add-path-dark.gif">
+        <img alt="TexField Editing" src="./assets/UI-add-path-light.gif" width='100%'>
+	</picture>
+</p>
+
+
 
 ## Features
 
