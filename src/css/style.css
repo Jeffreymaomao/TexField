@@ -31,6 +31,10 @@ body {
 }
 
 /* moving note */
+.texfield-container.movingNote{
+    cursor: default;
+}
+
 .texfield-container.movingNote .note{
     cursor: grab;
 }
