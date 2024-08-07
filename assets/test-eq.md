@@ -16,7 +16,6 @@
     \frac{\partial \rho}{\partial t} + \nabla \cdot\left(\rho \mathbf{u}\right) = 0
     $$
     
-    
 - Euler's equation **Fluid Dynamics (FD)**
     $$
     \rho \frac{d\textbf{u}}{dt}= -\nabla\rho + \mathbf{g}
