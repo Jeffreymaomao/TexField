@@ -42,12 +42,14 @@
 | Delete Focused Note | Select Note $\to$ <kbd>delete</kbd>                     | Select Note $\to$ <kbd>Backspace</kbd>            |
 | Delete Focused Note | Select Path $\to$ <kbd>delete</kbd>                     | Select Path $\to$ <kbd>Backspace</kbd>            |
 
-| Global Action            | Method (mac OS)                   | Method (Windows)               |
-| ------------------------ | --------------------------------- | ------------------------------ |
-| Toggle Dark / Light mode | <kbd>command</kbd> + <kbd>b</kbd> | <kbd>Ctrl</kbd> + <kbd>b</kbd> |
-| Export JSON              | <kbd>command</kbd> + <kbd>e</kbd> | <kbd>Ctrl</kbd> + <kbd>e</kbd> |
-| Print PDF                | <kbd>command</kbd> + <kbd>p</kbd> | <kbd>Ctrl</kbd> + <kbd>p</kbd> |
-| Full Screen              | <kbd>command</kbd> + <kbd>f</kbd> | <kbd>Ctrl</kbd> + <kbd>f</kbd> |
+| Global Action            | Method (mac OS)                                      | Method (Windows)                                  |
+| ------------------------ | ---------------------------------------------------- | ------------------------------------------------- |
+| Toggle Dark / Light mode | <kbd>command</kbd> + <kbd>b</kbd>                    | <kbd>Ctrl</kbd> + <kbd>b</kbd>                    |
+| Print PDF                | <kbd>command</kbd> + <kbd>p</kbd>                    | <kbd>Ctrl</kbd> + <kbd>p</kbd>                    |
+| Full Screen              | <kbd>command</kbd> + <kbd>f</kbd>                    | <kbd>Ctrl</kbd> + <kbd>f</kbd>                    |
+| Export JSON              | <kbd>command</kbd> + <kbd>e</kbd>                    | <kbd>Ctrl</kbd> + <kbd>e</kbd>                    |
+| Import JSON              | Drag and Drop file to Window                         | Drag and Drop file to Window                      |
+| Export LaTeX             | <kbd>command</kbd> + <kbd>shift</kbd> + <kbd>e</kbd> | <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>e</kbd> |
 
 ## User Interface
 
