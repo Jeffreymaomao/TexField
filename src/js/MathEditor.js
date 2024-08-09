@@ -81,7 +81,7 @@ class MathEditor {
             placeholder: 'Input some LaTeX...',
             tabIndex: -1,
             rows: 1,
-            value: '',
+            value: state.latex || '',
         });
         const mathRenderLatexArea = createAndAppendElement(mathBlock, 'div', {
             class: 'mathnote-latex'
@@ -379,18 +379,14 @@ class MathEditor {
         this.dom.container.innerHTML = '';
         // ---
         const progressState = (state)=>{
+            console.log(state)
             const id = state.id;
             const id_num = parseInt(id.split('-').pop());
             if(id_num >= this._id_num) this._id_num = id_num+1;
-            const {matheq, mathfield} = this.addMathModeArea(state);
-            this.dom.container.appendChild(matheq);
-            this.states[id] = state;
 
-            if(state.latex){
-                mathfield.latex(state.latex);
-            } else if (state.text) {
-                this.addTextModeArea(matheq, mathfield, state);
-            }
+            const block = this.addMathModeArea(state);
+            this.dom.container.appendChild(block);
+            this.states[id] = state;
         }
         // ---
         if(order){

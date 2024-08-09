@@ -350,18 +350,22 @@ class TexField {
             });
             window.MathEditors = window.MathEditors.filter(matheditor => matheditor.id !== deleteId);
         } else if (e.metaKey || e.ctrlKey) {
-            if (e.key === 'e') { // export 
+            if (e.key === 'e' && !e.shiftKey && !e.altKey) { // export json state
                 e.preventDefault();
-                const filename = `texfield-${this.createTime}.json`;
+                const filename = `TexField-${this.createTime}.json`;
                 this.exportState(filename);
-            } else if (e.key === 's') { // save
+            } else if (e.key === 'e' && e.shiftKey && !e.altKey) { // export json state
+                e.preventDefault();
+                const filename = `TexField-${this.createTime}.tex`;
+                this.exportLaTeX(filename);
+            } else if (e.key === 's' && !e.shiftKey && !e.altKey) { // save
                 e.preventDefault();
                 const states = this.getState();
                 console.log(states)
-            } else if (e.key === 'f') { // fullscreen
+            } else if (e.key === 'f' && !e.shiftKey && !e.altKey) { // fullscreen
                 e.preventDefault();
                 this.toggleFullScreen()
-            } else if (e.key === 'b') {
+            } else if (e.key === 'b' && !e.shiftKey && !e.altKey) {
                 if (!this.isUserToggleDarkLightMode) { this.isUserToggleDarkLightMode = true; }
                 this.isDarkMode = !this.isDarkMode;
                 this.changeDarkLightModeEvent();
@@ -529,6 +533,40 @@ class TexField {
         return states;
     }
 
+    getLaTeX(isMarkdown){
+        let LaTeX = isMarkdown ? '' : '\\documentclass{article}\n';
+        if(!isMarkdown){
+            ['amsmath', 'amssymb', 'amsfonts', 'geometry', 'physics']
+                .forEach(p=>LaTeX+=`\\usepackage{${p}}\n`);
+            LaTeX += '\\begin{document}\n\n';
+        }
+
+        window.MathEditors.forEach((matheditor, index) => {
+            const id = matheditor.id;
+            const dom = this.dom.noteContainer.querySelector(`#${id}`);
+            if (!dom) return;
+            const order = Array.from(dom.querySelectorAll("div")).filter(m => m.id.includes(`${id}-`)).map(m => m.id);
+            if(isMarkdown){
+
+            } else {
+                LaTeX += '%'.repeat(60)+'\n';
+                LaTeX += `\\section{Note-${index+1}}\t%${id}\n\n`;
+            }
+            Object.keys(matheditor.states).forEach(stateId=>{
+                const state = matheditor.states[stateId];
+                if(!state.latex) return;
+                if(isMarkdown){
+                    LaTeX += `$$\n${state.latex}\n$$\n\n`;
+                } else {
+                    LaTeX += `%${stateId}\n`
+                    LaTeX += `\\begin{equation}\n${state.latex}\n\\end{equation}\n\n`;
+                }
+            });
+        });
+        if(!isMarkdown) LaTeX += '\\end{document}';
+        return LaTeX;
+    }
+
     exportState(filename) {
         this.checkTranslate();
         const states = this.getState();
@@ -540,6 +578,17 @@ class TexField {
         document.body.appendChild(downloadAnchorNode); // required for firefox
         downloadAnchorNode.click();
         downloadAnchorNode.remove()
+    }
+
+    exportLaTeX(filename) {
+        const isMarkdown = filename.endsWith('tex') ? false : true;
+        const LaTeX = this.getLaTeX(isMarkdown);
+        const link = document.createElement("a");
+        const file = new Blob([LaTeX], { type: 'text/plain' });
+        link.href = URL.createObjectURL(file);
+        link.download = filename;
+        link.click();
+        URL.revokeObjectURL(link.href);
     }
 
     containerDropEvent(e) {
