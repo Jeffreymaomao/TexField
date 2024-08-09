@@ -197,6 +197,7 @@ class TexField {
 
     containerMouseDownEvent(e) {
         // remove focus
+        this.focusNote = null;
         this.checkTranslate();
         Object.values(this.dom.notes).forEach(note => { note.classList.remove('focus'); })
         Object.values(this.dom.paths).forEach(path => { path.dom.classList.remove('focus'); })
