@@ -371,13 +371,19 @@ class TexField {
                 this.changeDarkLightModeEvent();
                 window.localStorage.setItem("isDarkMode", this.isDarkMode);
 
+            } else if (e.key === 'p') {
+                e.preventDefault();
+                this.printInfiniteCanvas();
+            } else if (e.key === 'o') {
+                e.preventDefault();
+                this.openDesmos();
+            } else if (e.key === 'a') {
+                e.preventDefault();
+                this.askChatGPT();
             } else if (e.altKey) { // center matheditor
                 if (['Digit1', 'Digit2', 'Digit3', 'Digit4', 'Digit5', 'Digit6', 'Digit7', 'Digit8', 'Digit9'].includes(e.code)) {
                     this.centerNote(parseInt(e.code.replace('Digit', '')));
                 }
-            } else if (e.key === 'p') {
-                e.preventDefault();
-                this.printInfiniteCanvas();
             }
         }
     }
@@ -697,6 +703,12 @@ class TexField {
             window.print();
         });
     }
+
+    ////////////////////////////////////////////////////////////
+    // open Desmos & ask ChatGPT 
+    ////////////////////////////////////////////////////////////
+    openDesmos(){} // This method is implemented by Tampermonkey, due to CROS problem.
+    askChatGPT(){} // This method is implemented by Tampermonkey, due to CROS problem.
 }
 
 export default TexField;
