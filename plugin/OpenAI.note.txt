@@ -1,0 +1,30 @@
+## Need Access Token
+
+https://chatgpt.com/backend-api/settings/user
+https://chatgpt.com/backend-api/memories
+https://chatgpt.com/backend-api/user_surveys/active
+https://chatgpt.com/backend-api/settings/voices
+https://chatgpt.com/backend-api/gizmos/bootstrap
+https://chatgpt.com/backend-api/gizmos/pinned
+https://chatgpt.com/backend-api/connectors/check
+https://chatgpt.com/backend-api/referral/invites
+
+## Method Not Alowed
+
+https://chatgpt.com/backend-api/sentinel/chat-requirements
+https://chatgpt.com/backend-api/attributions
+
+## No Need Access Token
+
+https://chatgpt.com/backend-api/conversation/init
+https://chatgpt.com/backend-api/conversations
+https://chatgpt.com/backend-api/models
+https://chatgpt.com/backend-api/model_icons
+https://chatgpt.com/backend-api/me
+
+# Process
+
+## After Asking Something
+
+1. https://chatgpt.com/backend-api/conversation
+
