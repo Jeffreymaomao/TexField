@@ -247,106 +247,6 @@ class MathEditor {
         }.bind(this));
     }
 
-    ////////////////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////
-
-    // addTextModeArea(matheq, mathfield, _state){
-    //     const id = matheq.id;
-    //     const state = this.states[id] || _state;
-    //     if(!state) return;
-    //     const newMatheq = createAndAppendElement(null, "div", {
-    //         class: "mathnote-block textmode",
-    //         id: id
-    //     });
-    //     matheq.replaceWith(newMatheq);
-
-    //     const textContainer = createAndAppendElement(newMatheq, "div", {
-    //         class: "mathnote-text-container"
-    //     });
-
-    //     const textArea = createAndAppendElement(textContainer, "textarea", {
-    //         class: "mathnote-text-textarea",
-    //         autocapitalize: 'off',
-    //         id: `${id}-textmode-textarea`,
-    //         rows: 1,
-    //         value: state.text || ''
-    //     });
-    //     const adjustTextAreaWidth = ()=>{
-    //         state.text = textArea.value;
-    //         state.isEmpty = state.text==='';
-    //         textArea.style.height = 'auto';
-    //         textArea.style.width = 'auto';
-    //         textArea.style.height = (textArea.scrollHeight) + 'px';
-    //         textArea.style.width = (textArea.scrollWidth) + 'px';
-    //     }
-    //     setTimeout(adjustTextAreaWidth, 100);
-
-    //     textArea.addEventListener("keydown", function(e) {
-    //         this.handleTextKeydown(e, textArea, newMatheq);
-    //     }.bind(this), false);
-
-    //     textArea.addEventListener("focus", function(e) {
-    //         newMatheq.classList.add("focus");
-    //     }.bind(this), false);
-
-    //     textArea.addEventListener("blur", function(e) {
-    //         newMatheq.classList.remove("focus");
-    //     }.bind(this), false);
-
-    //     textArea.addEventListener('compositionstart', function() {
-    //         this.isComposing = true;
-    //     }.bind(this), false);
-
-    //     textArea.addEventListener('compositionend', function() {
-    //         this.isComposing = false;
-    //     }.bind(this), false);
-
-    //     textArea.addEventListener("input", adjustTextAreaWidth.bind(this), false);
-
-    //     mathfield.blur();
-    //     mathfield = null;
-    //     textArea.focus();
-    //     setTimeout(function(){
-    //         if(state.text) return;
-    //         textArea.value = "";
-    //         state.text = textArea.value;
-    //         state.isEmpty = true;
-    //     }, 0);
-
-    //     this.orderLabelNum();
-    //     this.dom.blocks[id] = newMatheq;
-    //     delete state.latex;
-    // }
-
-    // handleTextKeydown(event, textArea, textModeMatheq) {
-    //     const focusState = this.states[this.focusId];
-    //     if(this.isComposing) return;
-
-    //     if (event.key==='ArrowUp' || event.key==='ArrowDown') {
-    //         const cursorPosition = textArea.selectionStart;
-    //         const hasPreviousLine = cursorPosition > 0;
-    //         const hasNextLine = cursorPosition < textArea.value.length;
-    //         if (event.key === 'ArrowUp' && !hasPreviousLine) {
-    //             this.moveFocusUpDown(event, textModeMatheq);
-    //         } else if (event.key === 'ArrowDown' && !hasNextLine) {
-    //             this.moveFocusUpDown(event, textModeMatheq);
-    //         }
-    //     } else if (event.key==='Enter' && !event.shiftKey && !event.ctrlKey && !event.altKey && !event.metaKey) {
-    //         event.preventDefault();
-    //         this.createEquationDom();
-    //     }  else if (focusState.isEmpty && event.key==='Backspace' && !event.shiftKey && !event.ctrlKey && !event.altKey && !event.metaKey){
-    //         this.deleteFocus();
-    //     } else if(focusState.isEmpty && (event.ctrlKey || event.metaKey) && event.key==='/') {
-    //         const id = this.focusId;
-    //         const state = this.states[id];
-    //         const {matheq, mathfield} = this.addMathModeArea(state);
-    //         textModeMatheq.replaceWith(matheq);
-    //         this.orderLabelNum();
-    //         mathfield.focus();
-    //         delete state.text
-    //     }
-    // }
-
     ////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////
 
@@ -379,7 +279,7 @@ class MathEditor {
         this.dom.container.innerHTML = '';
         // ---
         const progressState = (state)=>{
-            console.log(state)
+            // console.log(state)
             const id = state.id;
             const id_num = parseInt(id.split('-').pop());
             if(id_num >= this._id_num) this._id_num = id_num+1;

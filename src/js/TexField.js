@@ -33,6 +33,7 @@ class TexField {
         const localStorageDarkMode = window.localStorage.getItem("isDarkMode");
         this.isDarkMode = `${localStorageDarkMode}` ? localStorageDarkMode === 'true' : (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
         this.isUserToggleDarkLightMode = `${localStorageDarkMode}` ? true : false;
+        this.hash = hash;
     }
 
     ////////////////////////////////////////////////////////////
@@ -377,7 +378,7 @@ class TexField {
             } else if (e.key === 'o') {
                 e.preventDefault();
                 this.openDesmos();
-            } else if (e.key === 'a') {
+            } else if (e.key === 'a' && e.shiftKey && !e.altKey) {
                 e.preventDefault();
                 this.askChatGPT();
             } else if (e.altKey) { // center matheditor
@@ -687,7 +688,7 @@ class TexField {
             const pWidth = (range.xmax - range.xmin) + 2*printPadding;
             const pHeight = (range.ymax - range.ymin) + 2*printPadding;
 
-            console.log(pWidth, pHeight);
+            // console.log(pWidth, pHeight);
 
             addStyle(`@page {size: ${pWidth}px ${pHeight}px; margin: 0;}`)
             document.title = `TexField-${getTime()}`;
@@ -707,8 +708,85 @@ class TexField {
     ////////////////////////////////////////////////////////////
     // open Desmos & ask ChatGPT 
     ////////////////////////////////////////////////////////////
-    openDesmos(){} // This method is implemented by Tampermonkey, due to CROS problem.
-    askChatGPT(){} // This method is implemented by Tampermonkey, due to CROS problem.
+    openDesmos() {} // This method is implemented by Tampermonkey, due to CROS problem.
+    askChatGPT() {} // This method is implemented by Tampermonkey, due to CROS problem.
+    aiTakeNote(markdown, id) {
+        // START: get position
+
+        const range = {
+            xmin: Infinity,
+            ymin: Infinity,
+            xmax: -Infinity,
+            ymax: -Infinity,
+        };
+        Object.values(this.dom.notes).forEach(note => {
+            const rect = note.getBoundingClientRect();
+            const xmin = rect.x; // top left x
+            const ymin = rect.y; // top left y
+            const xmax = rect.x + rect.width; // bottom right x
+            const ymax = rect.y + rect.height; // bottom right x
+            if (xmin < range.xmin) range.xmin = xmin;
+            if (ymin < range.ymin) range.ymin = ymin;
+            if (xmax > range.xmax) range.xmax = xmax;
+            if (ymax > range.ymax) range.ymax = ymax;
+        });
+
+        const x = range.xmax + 100; // right
+        const y = window.innerHeight/2; // center-height
+
+        // START: parse markdown to state
+        const state = {};
+        let isMath = false;
+        markdown.split("$$").forEach((part, index)=>{
+            const block_id = `${id}-${index+1}`;
+            if(isMath) {
+                const cleanedPart = part.replace(/[\n\t]/g, ' ').trim();
+                state[block_id] = {
+                    id: block_id,
+                    latex: cleanedPart
+                };
+            } else {
+                const lines = part.split("\n");
+                let text = "";
+                lines.forEach((line)=>{
+                    if(!line) return;
+                    const match = line.match(/^#+/);
+                    if(match){
+                        const level = match ? match[0].length : 0;
+                        line = line.substring(level).trim();
+                             if(level==1) line =  `{\\LARGE{${line}}}`
+                        else if(level==2) line =  `{\\large{${line}}}`
+                        else if(level==3) line = `{\\textbf{${line}}}`
+                        else if(level==4) line = `{\\textbf{${line}}}`
+                        else if(level==5) line = `{\\textbf{${line}}}`
+                    }
+                    text += `& \\text{${line}} \\\\\n`;
+                });
+                state[block_id] = {
+                    id: block_id,
+                    latex: `\\begin{aligned}\n${text}\\end{aligned}`
+                };
+            }
+            order.push(block_id);
+            isMath = !isMath;
+        });
+
+        // START: Take note
+        if(Object.keys(this.dom.notes).includes(id)){
+            // old ai note
+            this.dom.notes[id].remove();
+            this.addNote(x, y, id,
+                null, // create time (auto generate)
+                state
+            );
+        } else {
+            // new ai note
+            this.addNote(x, y, id,
+                null, // create time (auto generate)
+                state
+            );
+        }
+    }
 }
 
 export default TexField;
