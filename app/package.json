@@ -10,7 +10,8 @@
 	"author": "Chang-Mao, Yang",
 	"license": "MIT",
 	"devDependencies": {
-		"electron": "^32.0.1"
+		"electron": "^32.0.1",
+		"electron-builder": "^25.1.8"
 	},
 	"dependencies": {
 		"fs": "^0.0.1-security"
