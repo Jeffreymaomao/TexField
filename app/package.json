@@ -16,15 +16,13 @@
 		},
 		"extraResources": [
 			{
-				"from": "src",
+				"from": "../src",
 				"to": "src"
 			}
 		],
 		"files": [
-			"app/**/*",
-			"src/**/*",
-			"node_modules/**/*",
-			"!**/node_modules/.bin"
+			"app.js",
+			"src/**/*"
 		],
 		"mac": {
 			"target": "dmg",
