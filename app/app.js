@@ -6,10 +6,7 @@ process.env['ELECTRON_DISABLE_SECURITY_WARNINGS'] = 'true';
 const createWindow = () => {
     const win = new BrowserWindow({
         width: 800,
-        height: 600,
-        webPreferences: {
-            preload: path.join(__dirname, 'preload.js')
-        }
+        height: 600
     });
 
     win.loadFile(path.join(__dirname, 'src/index.html'));
