@@ -5,7 +5,31 @@
 	"main": "app.js",
 	"scripts": {
 		"start": "electron .",
+		"build": "electron-builder",
 		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"build": {
+		"appId": "com.ChangMao.TexField",
+		"productName": "TexField",
+		"directories": {
+			"output": "dist"
+		},
+		"extraResources": [
+			{
+				"from": "src",
+				"to": "src"
+			}
+		],
+		"files": [
+			"app/**/*",
+			"src/**/*",
+			"node_modules/**/*",
+			"!**/node_modules/.bin"
+		],
+		"mac": {
+			"target": "dmg",
+			"icon": "icon/icon.icns"
+		}
 	},
 	"author": "Chang-Mao, Yang",
 	"license": "MIT",
