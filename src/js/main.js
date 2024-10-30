@@ -8,6 +8,9 @@ import {createAndAppendElement} from './Tool.js';
 
 const visited = localStorage.getItem('visited');
 window.addEventListener("load", (e)=>{
+	document.title = 'TexField';
+	document.querySelector('h1').innerText = 'TexField';
+	// ---
 	const app = new TexField({});
 	app.addNote(window.innerWidth*0.5, window.innerHeight*0.5);
 	// window.app = app;

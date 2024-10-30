@@ -4,175 +4,240 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=1">
+    <meta name="description" content="TexField is a powerful web application for creating, managing, and linking LaTeX notes on an infinitely large canvas. Easily organize your mathematical notes with shortcuts and export options.">
+    <meta name="keywords" content="TexField, LaTeX, notes, infinite canvas, mathematical notes, KaTeX, export JSON, export LaTeX">
+    <meta property="og:title" content="TexField - LaTeX Notes on an Infinite Canvas">
+    <meta property="og:description" content="TexField is a powerful web application for creating, managing, and linking LaTeX notes.">
+    <meta property="og:image" content="https://jeffreymaomao.github.io/TexField/assets/UI-main.png">
+    <meta property="og:url" content="https://jeffreymaomao.github.io/TexField/dist/">
+    <meta property="og:type" content="website">
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "TexField",
+        "description": "TexField is available as a web application and a macOS app for creating, managing, and linking LaTeX notes on an infinite canvas.",
+        "url": "https://jeffreymaomao.github.io/TexField/dist/",
+        "applicationCategory": "EducationalApplication",
+        "operatingSystem": "Web",
+        "softwarePlatform": "Web",
+        "image": "https://jeffreymaomao.github.io/TexField/assets/UI-main.png",
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+        },
+        "author": {
+            "@type": "Person",
+            "name": "Chang-Mao",
+            "url": "https://github.com/jeffreymaomao"
+        },
+        "featureList": [
+            "Create and edit LaTeX notes",
+            "Link notes on an infinite canvas",
+            "Export notes to JSON or LaTeX",
+            "Organize mathematical ideas efficiently"
+        ]
+    }, {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "TexField for macOS",
+        "description": "TexField's macOS application version for creating and managing LaTeX notes on an infinite canvas.",
+        "url": "https://github.com/Jeffreymaomao/TexField/releases",
+        "downloadUrl": "https://github.com/Jeffreymaomao/TexField/releases",
+        "applicationCategory": "EducationalApplication",
+        "operatingSystem": "macOS",
+        "softwarePlatform": "macOS",
+        "image": "https://jeffreymaomao.github.io/TexField/assets/UI-main.png",
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+        },
+        "author": {
+            "@type": "Person",
+            "name": "Chang-Mao",
+            "url": "https://github.com/jeffreymaomao"
+        },
+        "featureList": [
+            "Create and edit LaTeX notes",
+            "Link notes on an infinite canvas",
+            "Export notes to JSON or LaTeX",
+            "Organize mathematical ideas efficiently"
+        ]
+    }
+    </script>
+    <title>TexField - LaTeX Notes on an Infinite Canvas | Create, Manage, and Link Mathematical Notes</title>
     <link id="favicon" rel="icon" type="image/png" href="./img/TexField.light.png" />
-    <title>TexField</title>
     <script src="js/katex-0.16.11.min.js"></script>
 </head>
 
 <body>
     <div id='help' style='display: none;' class='help hide'>
         <div class='help-container'>
-            <div align='center'>
-                <img alt="TexField Logo" src="./img/TexField.light.png" width='120px' draggable='false'>
+            <header align='center'>
+                <img alt="TexField Logo - LaTeX Note Management on an Infinite Canvas" src="./img/TexField.light.png" width='120px' draggable='false'>
                 <br>
-                <h1 align='center'>TexField</h1>
-            </div>
-            <p>
-                <strong>TexField</strong> is a web application designed for creating and managing LaTeX notes on an infinitely large canvas.
-            </p>
-            <h2>Usage / Shortcuts</h2>
-            <div id='shortcuts' align='center'>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>MathEditor Action</th>
-                            <th align="left">Method (mac OS)</th>
-                            <th align="left">Method (Windows)</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>Toggle Block Editing mode</td>
-                            <td align="left"><kbd>⌘</kbd> + <kbd>/</kbd></td>
-                            <td align="left"><kbd>Ctrl</kbd> + <kbd>/</kbd></td>
-                        </tr>
-                        <tr>
-                            <td>Create New Block</td>
-                            <td align="left"><kbd>⌘</kbd> + <kbd>return</kbd></td>
-                            <td align="left"><kbd>Ctrl</kbd> + <kbd>Enter</kbd></td>
-                        </tr>
-                        <tr>
-                            <td>Delete Foucs Block</td>
-                            <td align="left"><kbd>⌘</kbd> + <kbd>delete</kbd></td>
-                            <td align="left"><kbd>Ctrl</kbd> + <kbd>Backspace</kbd></td>
-                        </tr>
-                        <tr>
-                            <td>Move focus Up / Down</td>
-                            <td align="left"><kbd>↑</kbd> or <kbd>↓</kbd></td>
-                            <td align="left"><kbd>↑</kbd> or <kbd>↓</kbd></td>
-                        </tr>
-                        <tr>
-                            <td>Focus Block</td>
-                            <td align="left">Click Block</td>
-                            <td align="left">Click Block</td>
-                        </tr>
-                    </tbody>
-                </table>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>TexField Action</th>
-                            <th align="left">Method (mac OS)</th>
-                            <th align="left">Method (Windows)</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>Move Canvas</td>
-                            <td align="left">Scroll Wheel / Drag Canvas</td>
-                            <td align="left">Scroll Wheel / Drag Canvas</td>
-                        </tr>
-                        <tr>
-                            <td>Add New Note</td>
-                            <td align="left">Double Click</td>
-                            <td align="left">Double Click</td>
-                        </tr>
-                        <tr>
-                            <td>Add Path Link</td>
-                            <td align="left">
-                                <kbd>⌘</kbd> + <kbd>⇧</kbd> + Drag Note</td>
-                            <td align="left">
-                                <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + Drag Note</td>
-                        </tr>
-                        <tr>
-                            <td>Focus Note</td>
-                            <td align="left">
-                                <kbd>⌘</kbd> + Click Note</td>
-                            <td align="left">
-                                <kbd>Ctrl</kbd> + Click Note</td>
-                        </tr>
-                        <tr>
-                            <td>Focus Path</td>
-                            <td align="left">Click Path</td>
-                            <td align="left">Click Path</td>
-                        </tr>
-                        <tr>
-                            <td>Move Note</td>
-                            <td align="left">
-                                <kbd>⌘</kbd> + Drag Note</td>
-                            <td align="left">
-                                <kbd>Ctrl</kbd> + Drag Note</td>
-                        </tr>
-                        <tr>
-                            <td>Center Note</td>
-                            <td align="left">
-                                <kbd>⌘</kbd> + <kbd>⌥</kbd> + <kbd>1~9</kbd>
-                            </td>
-                            <td align="left">
-                                <kbd>Ctrl</kbd> + <kbd>Alt</kbd> + <kbd>1~9</kbd>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Delete Focused Note</td>
-                            <td align="left">Select Note ⇨ <kbd>delete</kbd>
-                            </td>
-                            <td align="left">Select Note ⇨ <kbd>Backspace</kbd>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Delete Focused Note</td>
-                            <td align="left">Select Path ⇨ <kbd>delete</kbd>
-                            </td>
-                            <td align="left">Select Path ⇨ <kbd>Backspace</kbd>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Global Action</th>
-                            <th>Method (mac OS)</th>
-                            <th>Method (Windows)</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>Toggle Dark / Light mode</td>
-                            <td><kbd>⌘</kbd> + <kbd>b</kbd></td>
-                            <td><kbd>Ctrl</kbd> + <kbd>b</kbd></td>
-                        </tr>
-                        <tr>
-                            <td>Print PDF</td>
-                            <td><kbd>⌘</kbd> + <kbd>p</kbd></td>
-                            <td><kbd>Ctrl</kbd> + <kbd>p</kbd></td>
-                        </tr>
-                        <tr>
-                            <td>Full Screen</td>
-                            <td><kbd>⌘</kbd> + <kbd>f</kbd></td>
-                            <td><kbd>Ctrl</kbd> + <kbd>f</kbd></td>
-                        </tr>
-                        <tr>
-                            <td>Export JSON</td>
-                            <td><kbd>⌘</kbd> + <kbd>e</kbd></td>
-                            <td><kbd>Ctrl</kbd> + <kbd>e</kbd></td>
-                        </tr>
-                        <tr>
-                            <td>Import JSON</td>
-                            <td>Drag and Drop file to Window</td>
-                            <td>Drag and Drop file to Window</td>
-                        </tr>
-                        <tr>
-                            <td>Export LaTeX</td>
-                            <td><kbd>⌘</kbd> + <kbd>⇧</kbd> + <kbd>e</kbd></td>
-                            <td><kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>e</kbd></td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-            <p>
-                More detail, see <a href="https://jeffreymaomao.github.io/TexField/" target="_blank" draggable='false'>Getting Started</a>.
-            </p>
+                <h1 align='center'>TexField - Create and Manage LaTeX Notes on an Infinite Canvas</h1>
+            </header>
+            <main>
+                <p>
+                    <strong>TexField</strong> is a web application designed for creating and managing LaTeX notes on an infinitely large canvas.
+                </p>
+                <h2>Usage / Shortcuts</h2>
+                <div id='shortcuts' align='center'>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>MathEditor Action</th>
+                                <th align="left">Method (mac OS)</th>
+                                <th align="left">Method (Windows)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Toggle Block Editing mode</td>
+                                <td align="left"><kbd>⌘</kbd> + <kbd>/</kbd></td>
+                                <td align="left"><kbd>Ctrl</kbd> + <kbd>/</kbd></td>
+                            </tr>
+                            <tr>
+                                <td>Create New Block</td>
+                                <td align="left"><kbd>⌘</kbd> + <kbd>return</kbd></td>
+                                <td align="left"><kbd>Ctrl</kbd> + <kbd>Enter</kbd></td>
+                            </tr>
+                            <tr>
+                                <td>Delete Foucs Block</td>
+                                <td align="left"><kbd>⌘</kbd> + <kbd>delete</kbd></td>
+                                <td align="left"><kbd>Ctrl</kbd> + <kbd>Backspace</kbd></td>
+                            </tr>
+                            <tr>
+                                <td>Move focus Up / Down</td>
+                                <td align="left"><kbd>↑</kbd> or <kbd>↓</kbd></td>
+                                <td align="left"><kbd>↑</kbd> or <kbd>↓</kbd></td>
+                            </tr>
+                            <tr>
+                                <td>Focus Block</td>
+                                <td align="left">Click Block</td>
+                                <td align="left">Click Block</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>TexField Action</th>
+                                <th align="left">Method (mac OS)</th>
+                                <th align="left">Method (Windows)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Move Canvas</td>
+                                <td align="left">Scroll Wheel / Drag Canvas</td>
+                                <td align="left">Scroll Wheel / Drag Canvas</td>
+                            </tr>
+                            <tr>
+                                <td>Add New Note</td>
+                                <td align="left">Double Click</td>
+                                <td align="left">Double Click</td>
+                            </tr>
+                            <tr>
+                                <td>Add Path Link</td>
+                                <td align="left">
+                                    <kbd>⌘</kbd> + <kbd>⇧</kbd> + Drag Note</td>
+                                <td align="left">
+                                    <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + Drag Note</td>
+                            </tr>
+                            <tr>
+                                <td>Focus Note</td>
+                                <td align="left">
+                                    <kbd>⌘</kbd> + Click Note</td>
+                                <td align="left">
+                                    <kbd>Ctrl</kbd> + Click Note</td>
+                            </tr>
+                            <tr>
+                                <td>Focus Path</td>
+                                <td align="left">Click Path</td>
+                                <td align="left">Click Path</td>
+                            </tr>
+                            <tr>
+                                <td>Move Note</td>
+                                <td align="left">
+                                    <kbd>⌘</kbd> + Drag Note</td>
+                                <td align="left">
+                                    <kbd>Ctrl</kbd> + Drag Note</td>
+                            </tr>
+                            <tr>
+                                <td>Center Note</td>
+                                <td align="left">
+                                    <kbd>⌘</kbd> + <kbd>⌥</kbd> + <kbd>1~9</kbd>
+                                </td>
+                                <td align="left">
+                                    <kbd>Ctrl</kbd> + <kbd>Alt</kbd> + <kbd>1~9</kbd>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Delete Focused Note</td>
+                                <td align="left">Select Note ⇨ <kbd>delete</kbd>
+                                </td>
+                                <td align="left">Select Note ⇨ <kbd>Backspace</kbd>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Delete Focused Note</td>
+                                <td align="left">Select Path ⇨ <kbd>delete</kbd>
+                                </td>
+                                <td align="left">Select Path ⇨ <kbd>Backspace</kbd>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Global Action</th>
+                                <th>Method (mac OS)</th>
+                                <th>Method (Windows)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Toggle Dark / Light mode</td>
+                                <td><kbd>⌘</kbd> + <kbd>b</kbd></td>
+                                <td><kbd>Ctrl</kbd> + <kbd>b</kbd></td>
+                            </tr>
+                            <tr>
+                                <td>Print PDF</td>
+                                <td><kbd>⌘</kbd> + <kbd>p</kbd></td>
+                                <td><kbd>Ctrl</kbd> + <kbd>p</kbd></td>
+                            </tr>
+                            <tr>
+                                <td>Full Screen</td>
+                                <td><kbd>⌘</kbd> + <kbd>f</kbd></td>
+                                <td><kbd>Ctrl</kbd> + <kbd>f</kbd></td>
+                            </tr>
+                            <tr>
+                                <td>Export JSON</td>
+                                <td><kbd>⌘</kbd> + <kbd>e</kbd></td>
+                                <td><kbd>Ctrl</kbd> + <kbd>e</kbd></td>
+                            </tr>
+                            <tr>
+                                <td>Import JSON</td>
+                                <td>Drag and Drop file to Window</td>
+                                <td>Drag and Drop file to Window</td>
+                            </tr>
+                            <tr>
+                                <td>Export LaTeX</td>
+                                <td><kbd>⌘</kbd> + <kbd>⇧</kbd> + <kbd>e</kbd></td>
+                                <td><kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>e</kbd></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p>
+                    More detail, see <a href="https://jeffreymaomao.github.io/TexField/" target="_blank" draggable='false'>Getting Started</a>.
+                </p>
+            </main>
             <footer align='center'>
                 Copyright © 2024 Chang-Mao. All rights reserved.
             </footer>
