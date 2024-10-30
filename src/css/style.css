@@ -4,9 +4,209 @@
 }
 
 body {
-    font-family: Arial, sans-serif;
+    font-family:Helvetica, Arial, KaTeX_Main, sans-serif;
     overflow: hidden;
+    width: 100vw;
+    height: 100vh;
 }
+
+a {
+    text-decoration: none;
+}
+
+/**********************************
+ * help page *
+ **********************************/
+
+.help {
+    z-index: 100;
+    display: block;
+    position: absolute;
+    width: 50vw;
+    height: 80vh;
+    min-width: 650px;
+
+    right: 50%;
+    bottom: 50%;
+    border-radius: 20px;
+    background-color: rgba(250,250,250);
+    box-shadow: 0 0 15px #aaa;
+    overflow: hidden;
+    color: black;
+
+    transform: translate(50%,50%);
+}
+
+body.dark .help {
+    color: white;
+    background-color: #333;
+    box-shadow: 0 0 15px #000;
+}
+
+.help.hide {
+    width: 0px;
+    height: 0px;
+    right: 30px;
+    bottom: 25px;
+    min-width: 0;
+    transform: translate(0px,0px);
+}
+
+.help-container {
+    height: 100%;
+    padding: 50px 30px;
+    overflow-y: scroll;
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.help-container::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.help-container {
+  -ms-overflow-style: none;  /* IE and Edge */
+     scrollbar-width: none;  /* Firefox */
+}
+
+.help-container footer{
+    border-top: 1px solid #888;
+    border-bottom: 1px solid #888;
+    padding: 15px;
+    color: #888;
+}
+
+/* --- */
+
+.help-container #light-logo {
+    width: 120px;
+    height: 120px;
+    transition: 0.3s;
+    opacity: 1;
+}
+/* --- */
+.help-container h1 {
+    font-weight: 400;
+    text-align: center;
+    font-size: 30pt;
+    padding: 10px;
+    border-bottom: 1px solid #777;
+}
+
+body.dark .help-container h1  {
+    border-bottom: 1px solid #888;
+}
+
+.help-container h2 {
+    font-weight: 400;
+}
+
+/* --- */
+.help-container strong {
+    font-weight: 400;
+}
+.help-container p {
+    padding: 20px;
+    font-weight: 200;
+}
+
+/* --- */
+
+.help-container table {
+    border-collapse: collapse;
+    margin: 0px 5px 20px 5px;
+    font-weight: 200;
+    line-height: 16pt;
+}
+
+.help-container thead th{
+    border-bottom: 1.5px solid #888;
+    border-top: 1.5px solid #888;
+    border-right: 1.2px solid #ccc;
+    padding: 10px 5px;
+    text-align: center;
+    font-size: 12pt;
+    background-color: #eee;
+    font-weight: 400;
+}
+
+body.dark .help-container thead th {
+    background-color: #222;
+}
+
+.help-container tbody td{
+    border-right: 1.2px solid #ccc;
+    border-bottom: 1.2px solid #ccc;
+    text-align: center;
+    padding: 5px 6px;
+    font-size: 11pt;
+    min-width: 180px;
+}
+
+.help-container thead th:last-child,
+.help-container tbody td:last-child {
+    border-right: none;
+}
+
+kbd {
+    background-color: #eee;
+    border: 1px solid #bbb;
+    box-shadow: inset 0px -1px 0px #bbb;
+    border-radius: 5px;
+    padding: 2px 5px;
+    font-size: 10pt;
+    color: #444;
+}
+
+body.dark kbd {
+    color: #eee;
+    background-color: #777;
+    border: 1px solid #888;
+    box-shadow: inset 0px -1px 0px #888;
+}
+
+.help-container #shortcuts {
+    margin-bottom: 70px;
+}
+
+/* --- */
+.help .close {
+    position: absolute;
+    right: 20px;
+    top: 20px;
+    width: 32px;
+    height: 32px;
+    opacity: 0.3;
+    cursor: pointer;
+}
+
+.help .close:hover {
+    opacity: 1;
+}
+
+.help .close:before,
+.help .close:after {
+    content: ' ';
+    position: absolute;
+    left: 15px;
+    height: 25px;
+    width: 2px;
+    background-color: #333;
+}
+
+.help .close:before {
+    transform: rotate(45deg);
+}
+
+.help .close:after {
+    transform: rotate(-45deg);
+}
+
+body.dark .help .close:before,
+body.dark .help .close:after {
+    background-color: #bbb;
+}
+
 /**********************************
  * link bar *
  **********************************/
