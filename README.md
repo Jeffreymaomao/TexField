@@ -25,8 +25,8 @@
 | MathEditor Action            |       Method (mac OS)        |               Method (Windows)               |
 | ---------------------------- | :--------------------------- | :------------------------------------------- |
 | Toggle Block Editing mode    | <kbd>command</kbd> + <kbd>/</kbd> |        <kbd>Ctrl</kbd> + <kbd>/</kbd>        |
-| Create New Block             | <kbd>command</kbd> + <kbd>return</kbd> |      <kbd>Ctrl</kbd> + <kbd>Enter</kbd>      |
-| Delete Foucs Block           | <kbd>command</kbd> + <kbd>delete</kbd> |    <kbd>Ctrl</kbd> + <kbd>Backspace</kbd>    |
+| Create New Block             | <kbd>return</kbd> |      <kbd>Enter</kbd>      |
+| Delete Foucs Block           | <kbd>delete</kbd> |    <kbd>Backspace</kbd>    |
 | Move focus Up / Down | <kbd>↑</kbd> or <kbd>↓</kbd> | <kbd>Up Arrow</kbd> or <kbd>Down Arrow</kbd> |
 | Focus Block                  |            Click Block            |                    Click Block                    |
 
@@ -93,8 +93,12 @@ The image above shows how to edit a "Block". After focusing on a "Block", you ca
 	</picture>
 </p>
 
-- The left video shows how to add and delete "Blocks". After focusing on a "Block", press <kbd>command</kbd> + <kbd>enter</kbd> (For Windows users, press <kbd>Ctrl</kbd> + <kbd>Enter</kbd>) to add a new "Block" below the focused "Block". Press <kbd>command</kbd> + <kbd>delete</kbd> (For Windows users, press <kbd>Ctrl</kbd> + <kbd>Backspace</kbd>) to delete the focused "Block".
+- The left video shows how to add and delete "Blocks". After focusing on a "Block", press <kbd>enter</kbd> (For Windows users, press <kbd>Enter</kbd>) to add a new "Block" below the focused "Block". Press <kbd>delete</kbd> (For Windows users, press <kbd>Backspace</kbd>) to delete the focused "Block".
 - The right video shows how to move the entire "Canvas" and a single "Note". Dragging the "Canvas" directly will move the entire canvas. Press and hold <kbd>command</kbd> (For Windows users, hold <kbd>Ctrl</kbd>), then click on a "Note" to focus on it and drag it to move the "Note" individually.
+
+> [!Note]
+>
+> The video I present is the old version. Therefore, adding/deleting "Block" need to hold command/ctrl. However, in current version, you don't need to do that.
 
 ---
 
