@@ -7,6 +7,48 @@ body {
     font-family: Arial, sans-serif;
     overflow: hidden;
 }
+/**********************************
+ * link bar *
+ **********************************/
+.link-container {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    padding: 5px 15px;
+}
+
+.link-container a {
+    display: inline-block;
+    width: 25px;
+    height: 25px;
+    margin: 5px;
+    cursor: pointer;
+    transform: scale(1.0);
+    transition: 0.2s;
+}
+
+.link-container a:hover {
+    transform: scale(1.1);
+}
+
+.link-container a:active {
+    transform: scale(0.9);
+}
+/* --- */
+.link-github {
+    background: url('../img/github.light.svg');
+}
+body.dark .link-github {
+    background: url('../img/github.dark.svg');
+}
+/* --- */
+.link-help {
+    background: url('../img/help.light.svg');
+}
+body.dark .link-help {
+    background: url('../img/help.dark.svg');
+}
+
 
 /**********************************
  * texfield-container *
