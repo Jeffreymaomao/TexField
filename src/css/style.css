@@ -169,6 +169,14 @@ body.dark kbd {
     margin-bottom: 70px;
 }
 
+.help a {
+    color: rgba(100, 160, 250);
+}
+
+.help a:hover{
+    font-weight:400;
+}
+
 /* --- */
 .help .close {
     position: absolute;
@@ -223,11 +231,13 @@ body.dark .help .close:after {
     height: 25px;
     margin: 5px;
     cursor: pointer;
+    opacity: 0.5;
     transform: scale(1.0);
     transition: 0.2s;
 }
 
 .link-container a:hover {
+    opacity: 1.0;
     transform: scale(1.1);
 }
 
