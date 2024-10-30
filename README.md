@@ -39,8 +39,8 @@
 | Focus Path          | Click Path                                              | Click Path                                        |
 | Move Note           | <kbd>command</kbd> + Drag Note                          | <kbd>Ctrl</kbd> + Drag Note                       |
 | Center Note         | <kbd>command</kbd> + <kbd>option</kbd> + <kbd>1~9</kbd> | <kbd>Ctrl</kbd> + <kbd>Alt</kbd> + <kbd>1~9</kbd> |
-| Delete Focused Note | Select Note $\to$ <kbd>delete</kbd>                     | Select Note $\to$ <kbd>Backspace</kbd>            |
-| Delete Focused Note | Select Path $\to$ <kbd>delete</kbd>                     | Select Path $\to$ <kbd>Backspace</kbd>            |
+| Delete Focused Note | Select Note ⇨ <kbd>delete</kbd>                         | Select Note ⇨ <kbd>Backspace</kbd>                |
+| Delete Focused Note | Select Path ⇨ <kbd>delete</kbd>                         | Select Path ⇨ <kbd>Backspace</kbd>                |
 
 | Global Action            | Method (mac OS)                                      | Method (Windows)                                  |
 | ------------------------ | ---------------------------------------------------- | ------------------------------------------------- |
