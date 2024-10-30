@@ -169,6 +169,17 @@
     user-select: none;
 }
 
+.katex .mtable .col-align-r {
+    vertical-align: sub;
+}
+
+.katex .vlist-r+.vlist-r {
+    display: none;
+}
+
+.katex .tag {
+    display: none;
+}
 /* ---------------- */
 
 body.dark .mathnote-text-textarea,
