@@ -29,7 +29,7 @@ window.addEventListener("load", (e)=>{
 	});
 	// ---
 	const helpContainer = document.querySelector('#help');
-
+	helpContainer.style.display = '';
 	if(!visited) {
 		helpContainer.classList.remove('hide');
 		localStorage.setItem('visited', true);
