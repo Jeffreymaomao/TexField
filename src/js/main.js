@@ -6,7 +6,7 @@ import '../css/style.css';
 import TexField from './TexField.js';
 import {createAndAppendElement} from './Tool.js';
 
-
+const visited = localStorage.getItem('visited');
 window.addEventListener("load", (e)=>{
 	const app = new TexField({});
 	app.addNote(window.innerWidth*0.5, window.innerHeight*0.5);
@@ -27,4 +27,24 @@ window.addEventListener("load", (e)=>{
 		draggable: false,
 		title: 'Help'
 	});
+	// ---
+	const helpContainer = document.querySelector('#help');
+
+	if(!visited) {
+		helpContainer.classList.remove('hide');
+		localStorage.setItem('visited', true);
+	}
+
+	helpContainer.style.transition = '0.5s ease-in-out';
+	const closeButton = createAndAppendElement(helpContainer, 'div', {
+		class: 'close',
+	});
+	closeButton.addEventListener('click', ()=>{
+		helpContainer.classList.add('hide');
+	});
+	help.addEventListener('click', ()=>{
+		helpContainer.classList.toggle('hide');
+	});
+	// ---
+
 });
