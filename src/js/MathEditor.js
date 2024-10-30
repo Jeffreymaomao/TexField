@@ -196,7 +196,6 @@ class MathEditor {
             e.preventDefault();
             const start = mathTextArea.selectionStart;
             const end = mathTextArea.selectionEnd;
-
             const value = mathTextArea.value;
             mathTextArea.value = value.substring(0, start) + '\t' + value.substring(end);
             mathTextArea.selectionStart = mathTextArea.selectionEnd = start + 1;
@@ -221,11 +220,23 @@ class MathEditor {
             // ------------------------------------------------------------------------
         } else if (e.key==='ArrowUp' || e.key==='ArrowDown') {
             this.moveFocusUpDown(e, mathBlock);
-        } else if ((e.ctrlKey || e.metaKey) && e.key==='Enter' && !e.shiftKey && !e.altKey) {
+        } else if (this.focusId && e.key==='Enter' && !e.shiftKey && !e.altKey) {
             this.createEquationDom();
-        } else if ((e.ctrlKey || e.metaKey) && e.key==='Backspace' && !e.shiftKey && !e.altKey){
+        } else if (this.focusId && e.key==='Backspace' && !e.shiftKey && !e.altKey){
             this.deleteFocus();
-        } else if ((e.ctrlKey || e.metaKey) && e.key==='"' && !e.shiftKey && !e.altKey){
+        } else if (
+                !mathBlock.classList.contains('editing')
+                && !e.ctrlKey
+                && !e.metaKey
+            ) {
+            if(['Backspace', 'CapsLock', 'Escape', 'Enter', 
+                'Meta', 'Alt', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 
+                'Tab', 'Home', 'End', 'PageUp', 'PageDown', 'Insert', 'Delete',
+                'F1', 'F2', 'F3', 'F4', 'F5', 'F6', 'F7', 'F8', 'F9', 'F10', 'F11', 'F12'
+            ].includes(e.key)) return;
+            const editing = mathBlock.classList.toggle('editing');
+            this.adjustTextAreaSize(mathTextArea);
+            mathTextArea.focus();
         }
     }
 
