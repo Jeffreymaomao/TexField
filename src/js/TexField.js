@@ -193,7 +193,7 @@ class TexField {
         e.preventDefault();
         const isInsizeNote = findParentWithSelector(e.target, '.note');
         if(isInsizeNote) return;
-        app.addNote(e.clientX - this.translate.x, e.clientY - this.translate.y);
+        this.addNote(e.clientX - this.translate.x, e.clientY - this.translate.y);
     }
 
     containerMouseDownEvent(e) {
