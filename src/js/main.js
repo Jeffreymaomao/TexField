@@ -24,7 +24,7 @@ window.addEventListener("load", (e)=>{
 		draggable: false,
 		title: 'GitHub'
 	});
-	const help = createAndAppendElement(linkContainer, 'a', {
+	const help = createAndAppendElement(linkContainer, 'button', {
 		class: 'link-help',
 		href: '#',
 		draggable: false,

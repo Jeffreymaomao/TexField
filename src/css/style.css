@@ -219,13 +219,17 @@ body.dark .help .close:after {
  * link bar *
  **********************************/
 .link-container {
+    display: flex;
     position: absolute;
     right: 0;
     bottom: 0;
-    padding: 5px 15px;
+    padding: 10px 15px;
 }
 
-.link-container a {
+.link-container a,
+.link-container button {
+    border: none;
+    padding: 0;
     display: inline-block;
     width: 25px;
     height: 25px;
@@ -236,7 +240,8 @@ body.dark .help .close:after {
     transition: 0.2s;
 }
 
-.link-container a:hover {
+.link-container a:hover,
+.link-container button:hover {
     opacity: 1.0;
     transform: scale(1.1);
 }
