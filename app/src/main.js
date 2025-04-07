@@ -6,11 +6,10 @@ import {createAndAppendElement} from '../../src/js/Tool.js';
 const visited = localStorage.getItem('visited');
 window.addEventListener("load", (e)=>{
     document.querySelector('h1').innerText = 'TexField';
-    // ---
+    
     const app = new TexField({});
-    app.askChatGPT = ()=>{askOllama(app)}
     app.addNote(window.innerWidth*0.5, window.innerHeight*0.5);
-    // window.app = app;
+
     const linkContainer = createAndAppendElement(app.dom.container, 'div', {
         class: 'link-container'
     });
@@ -27,7 +26,7 @@ window.addEventListener("load", (e)=>{
         draggable: false,
         title: 'Help'
     });
-    // ---
+
     const helpContainer = document.querySelector('#help');
     helpContainer.style.display = '';
     if(!visited) {
@@ -45,6 +44,4 @@ window.addEventListener("load", (e)=>{
     help.addEventListener('click', ()=>{
         helpContainer.classList.toggle('hide');
     });
-    // ---
-
 });

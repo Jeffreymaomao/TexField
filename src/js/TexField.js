@@ -16,7 +16,7 @@ class TexField {
             size: 20,
             lineStyle: '#aaa',
             lineWidth: 1,
-            color: 'white'
+            color: 'rgb(255,255,255)'
         }; // this is light default background config
         this.background = Object.assign({}, this._background);
         this.createTime = getTime();
