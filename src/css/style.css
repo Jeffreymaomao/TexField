@@ -34,7 +34,8 @@ a {
     overflow: hidden;
     color: black;
 
-    transform: translate(50%,50%);
+    opacity: 1.0;
+    transform: translate(50%,50%) scale(1.0);
 }
 
 body.dark .help {
@@ -44,12 +45,11 @@ body.dark .help {
 }
 
 .help.hide {
-    width: 0px;
-    height: 0px;
     right: 30px;
     bottom: 25px;
     min-width: 0;
-    transform: translate(0px,0px);
+    opacity: 0.0;
+    transform: translate(50%,50%) scale(0.0);
 }
 
 .help-container {

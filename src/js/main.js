@@ -38,7 +38,7 @@ window.addEventListener("load", (e)=>{
 		localStorage.setItem('visited', true);
 	}
 
-	helpContainer.style.transition = '0.5s ease-in-out';
+	helpContainer.style.transition = '0.35s ease-in-out';
 	const closeButton = createAndAppendElement(helpContainer, 'div', {
 		class: 'close',
 	});
