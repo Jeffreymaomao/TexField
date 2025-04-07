@@ -34,6 +34,14 @@ function findParentWithSelector(element, cssSelector) {
     return null;
 }
 
+function toggleFullScreen() {
+    if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen();
+    } else if (document.exitFullscreen) {
+        document.exitFullscreen();
+    }
+}
+
 function hash(str) {
     let hash = 0;
     for (let i = 0; i < str.length; i++) {
@@ -75,6 +83,7 @@ function addStyle(style) {
 }
 
 export {
+    toggleFullScreen,
     createAndAppendElement,
     hash,
     getTime,

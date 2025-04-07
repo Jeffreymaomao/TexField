@@ -1,11 +1,16 @@
 import MathEditor from './MathEditor.js';
 import {
+    toggleFullScreen,
     createAndAppendElement,
     hash,
     getTime,
     addStyle,
     findParentWithSelector
 } from './Tool.js';
+
+import {
+    getLaTeX
+} from './IO.js';
 
 class TexField {
     constructor(config = {}) {
@@ -64,17 +69,17 @@ class TexField {
         this.initializeSVGLayer();
         setTimeout(() => { this.changeDarkLightModeEvent() }, 0); // since getLocalStorage may take time...
 
-        this.dom.container.addEventListener('wheel', this.containerWheelEvents.bind(this), { passive: true });
-        this.dom.container.addEventListener('dblclick', this.containerDoubleClickEvent.bind(this), false);
+        this.dom.container.addEventListener('wheel',     this.containerWheelEvents.bind(this), { passive: true });
+        this.dom.container.addEventListener('dblclick',  this.containerDoubleClickEvent.bind(this), false);
         this.dom.container.addEventListener('mousedown', this.containerMouseDownEvent.bind(this), false);
         this.dom.container.addEventListener('dragenter', this.preventDefaults, false);
-        this.dom.container.addEventListener('dragover', this.preventDefaults, false);
-        this.dom.container.addEventListener('drop', this.containerDropEvent.bind(this), false);
+        this.dom.container.addEventListener('dragover',  this.preventDefaults, false);
+        this.dom.container.addEventListener('drop',      this.containerDropEvent.bind(this), false);
         window.addEventListener('resize', this.windowResizeEvent.bind(this), false);
-        document.addEventListener('keydown', this.containerKeyDownEvent.bind(this), false);
-        document.addEventListener('keyup', this.containerKeyUpEvent.bind(this), false);
+        document.addEventListener('keydown',   this.containerKeyDownEvent.bind(this), false);
+        document.addEventListener('keyup',     this.containerKeyUpEvent.bind(this), false);
         document.addEventListener('mousemove', this.containerMouseMoveEvent.bind(this), false);
-        document.addEventListener('mouseup', this.containerMouseUpEvent.bind(this), false);
+        document.addEventListener('mouseup',   this.containerMouseUpEvent.bind(this), false);
         if (window.matchMedia) window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', this.changeDarkLightModeEvent.bind(this), false);
         if (window.matchMedia) window.matchMedia('(prefers-color-scheme: light)').addEventListener('change', this.changeDarkLightModeEvent.bind(this), false);
     }
@@ -104,16 +109,12 @@ class TexField {
     }
 
     setBezierCurvePath(path, start, end) {
-        const x1 = start.x,
-            y1 = start.y,
-            x2 = end.x,
-            y2 = end.y;
+        const x1 = start.x, y1 = start.y,
+              x2 = end.x,   y2 = end.y;
         const w1 = (x2 - x1) * 0.7;
         const w2 = (x2 - x1) * 0.7;
-        const cx1 = x1 + w1,
-            cy1 = y1,
-            cx2 = x2 - w2,
-            cy2 = y2;
+        const cx1 = x1 + w1, cy1 = y1,
+              cx2 = x2 - w2, cy2 = y2;
         path.setAttribute('d', `M ${x1} ${y1} C ${cx1} ${cy1}, ${cx2} ${cy2}, ${x2} ${y2}`);
     }
 
@@ -365,7 +366,7 @@ class TexField {
                 console.log(states)
             } else if (e.key === 'f' && !e.shiftKey && !e.altKey) { // fullscreen
                 e.preventDefault();
-                this.toggleFullScreen()
+                toggleFullScreen()
             } else if (e.key === 'b' && !e.shiftKey && !e.altKey) {
                 if (!this.isUserToggleDarkLightMode) { this.isUserToggleDarkLightMode = true; }
                 this.isDarkMode = !this.isDarkMode;
@@ -474,14 +475,6 @@ class TexField {
         canvas.style.backgroundSize = `${config.size}px ${config.size}px`;
     }
 
-    toggleFullScreen() {
-        if (!document.fullscreenElement) {
-            document.documentElement.requestFullscreen();
-        } else if (document.exitFullscreen) {
-            document.exitFullscreen();
-        }
-    }
-
     changeDarkLightModeEvent(e) {
         if (!this.isUserToggleDarkLightMode || e) this.isDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
         if (this.isDarkMode) { // dark mode
@@ -540,40 +533,6 @@ class TexField {
         return states;
     }
 
-    getLaTeX(isMarkdown){
-        let LaTeX = isMarkdown ? '' : '\\documentclass{article}\n';
-        if(!isMarkdown){
-            ['amsmath', 'amssymb', 'amsfonts', 'geometry', 'physics']
-                .forEach(p=>LaTeX+=`\\usepackage{${p}}\n`);
-            LaTeX += '\\begin{document}\n\n';
-        }
-
-        window.MathEditors.forEach((matheditor, index) => {
-            const id = matheditor.id;
-            const dom = this.dom.noteContainer.querySelector(`#${id}`);
-            if (!dom) return;
-            const order = Array.from(dom.querySelectorAll("div")).filter(m => m.id.includes(`${id}-`)).map(m => m.id);
-            if(isMarkdown){
-
-            } else {
-                LaTeX += '%'.repeat(60)+'\n';
-                LaTeX += `\\section{Note-${index+1}}\t%${id}\n\n`;
-            }
-            Object.keys(matheditor.states).forEach(stateId=>{
-                const state = matheditor.states[stateId];
-                if(!state.latex) return;
-                if(isMarkdown){
-                    LaTeX += `$$\n${state.latex}\n$$\n\n`;
-                } else {
-                    LaTeX += `%${stateId}\n`
-                    LaTeX += `\\begin{equation}\n${state.latex}\n\\end{equation}\n\n`;
-                }
-            });
-        });
-        if(!isMarkdown) LaTeX += '\\end{document}';
-        return LaTeX;
-    }
-
     exportState(filename) {
         this.checkTranslate();
         const states = this.getState();
@@ -589,7 +548,7 @@ class TexField {
 
     exportLaTeX(filename) {
         const isMarkdown = filename.endsWith('tex') ? false : true;
-        const LaTeX = this.getLaTeX(isMarkdown);
+        const LaTeX = getLaTeX(this.dom.noteContainer, isMarkdown);
         const link = document.createElement("a");
         const file = new Blob([LaTeX], { type: 'text/plain' });
         link.href = URL.createObjectURL(file);
